@@ -5,7 +5,7 @@ import config
 
 
 def test_generate_reply():
-    generated_reply = ContestBot.generate_reply()
+    generated_reply = ContestBot.generate_text()
     permutations = []
 
     # generate all possible uppercase, lowercase, and original permutations of config.replies + config.punctuation
