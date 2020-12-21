@@ -20,15 +20,13 @@ replies = ["Entering the giveaway", "I really want to win", "Please pick me", "P
 
 punctuation = ["", "!", "!!", "!!!", "!!!!", "!!!!!", "!!!!!!", ".", "..", "...", "....", ".....", "......"]
 
-# RATE LIMIT CONSTANTS (ONLY CHANGE THESE IF TWITTER ADJUSTS THEIR RATE LIMITS)
+# RATE LIMIT SLEEPS (only value that should be changed is SLEEP_RANDOMIZER, unless twitter rate limits change)
 MAX_FOLLOWING = 2000
-TOTAL_ACTIONS_LIMIT_PER_HOUR = 0
-RETWEET_LIMIT_PER_HOUR = 0
-LIKE_LIMIT_PER_HOUR = 0
-FOLLOW_LIMIT_PER_HOUR = 0
-COMMENT_LIMIT_PER_HOUR = 0
-UNFOLLOW_LIMIT_PER_HOUR = 0
-DM_LIMIT_PER_HOUR = 0
+SLEEP_RANDOMIZER = 5   # max limit of random time that will be added to each sleep, set to 0 for no randomization
+STATUS_SLEEP = 36  # 300 comments/retweets per 3 hours
+LIKE_SLEEP = 86.4  # 1000 likes per 24 hours
+FOLLOW_SLEEP = 216  # 400 follows per 24 hours
+DM_SLEEP = 86.4  # 1000 dms per 24 hours
 
 # KEYWORDS
 contest_keywords = ["giveaway", "contest", "sweepstakes", "to win"]
