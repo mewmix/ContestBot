@@ -1,12 +1,22 @@
 # LOGIN
+username = ""
 consumer_key = ""
 consumer_secret = ""
 token = ""
 token_secret = ""
 
+# TOGGLE FEATURES ON OR OFF
+retweet = True
+like = True
+follow = True
+comment = True
+dm = True
+
+# GENERAL SETTINGS
+count = 500  # num of tweets to search for each contest_keyword per iteration of the infinite main loop
+
 # SLEEP SETTINGS
-sleep_minimum = 0  # lower bound of sleep after each action
-sleep_maximum = 0  # upper bound of sleep after each action
+sleep_randomizer = 3  # random sleep from 0 to sleep_randomizer after each action (set to 0 for no randomization)
 
 # REPLY SETTINGS
 tag_handles = ["pluggrr", "cheapprr", "deallrr"]
@@ -20,21 +30,16 @@ replies = ["Entering the giveaway", "I really want to win", "Please pick me", "P
 
 punctuation = ["", "!", "!!", "!!!", "!!!!", "!!!!!", "!!!!!!", ".", "..", "...", "....", ".....", "......"]
 
-# RATE LIMIT SLEEPS (only value that should be changed is SLEEP_RANDOMIZER, unless twitter rate limits change)
-MAX_FOLLOWING = 2000
-SLEEP_RANDOMIZER = 5   # max limit of random time that will be added to each sleep, set to 0 for no randomization
-STATUS_SLEEP = 36  # 300 comments/retweets per 3 hours
-LIKE_SLEEP = 86.4  # 1000 likes per 24 hours
-FOLLOW_SLEEP = 216  # 400 follows per 24 hours
-DM_SLEEP = 86.4  # 1000 dms per 24 hours
 
 # KEYWORDS
 contest_keywords = ["giveaway", "contest", "sweepstakes", "to win"]
+
 retweet_keywords = ["rt", "retweet", "share"]
 like_keywords = ["like", "favorite", "fav"]
 follow_keywords = ["follow"]
 comment_keywords = ["reply", "comment"]
-tag_keywords = ["tag", "mention"]
+tag_keywords = ["tag", "mention", "friend"]
 dm_keywords = ["message", "dm"]
-banned_users = []
+
+banned_user_words = ["bot"]
 banned_words = ["join", "download"]
