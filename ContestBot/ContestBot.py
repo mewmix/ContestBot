@@ -5,6 +5,83 @@ import tweepy
 import config
 
 
+def check_config():
+    """
+    Checks if the config.py file exists and all variables are provided and valid depending what features are turned on.
+    Call this function first in your main function so the program fails early if config.py is invalid.
+    Warning: This is not an exhaustive check and edge cases could not be caught by this function.
+
+    :return: raises Exception is errors detected.
+    """
+    valid = True
+    try:
+        # check authentication settings
+        if config.follow and not config.username:
+            valid = False
+            print("ERROR - config.follow feature ON requires you to supply a config.username.")
+
+        authentication_settings = [config.consumer_key, config.consumer_secret, config.token, config.token_secret]
+        if any(not setting for setting in authentication_settings):
+            valid = False
+            print("ERROR - Missing authentication setting(s) in config.py.")
+
+        # check toggle feature settings
+        toggle_settings = [config.retweet, config.like, config.follow, config.comment, config.dm]
+        if any(type(setting) is not bool for setting in toggle_settings):
+            valid = False
+            print("ERROR - Missing toggle setting(s) in config.py.")
+
+        # check general settings
+        if config.count <= 0:
+            valid = False
+            print("ERROR - Invalid config.count setting. Must be greater than 0.")
+
+        # check sleep settings
+        if config.sleep_randomizer < 0:
+            valid = False
+            print("ERROR - Invalid config.sleep_randomizer setting. Must be 0 or greater.")
+
+        # check reply settings
+        if config.comment and not all([config.tag_handles, config.replies, config.punctuation]):
+            valid = False
+            print("ERROR - config.comment feature ON requires you to supply config.tag_handles, config.replies, "
+                  "and config.punctuation.")
+
+        # check keyword settings
+        if not config.contest_keywords:
+            valid = False
+            print("ERROR - Missing config.contest_keywords.")
+
+        if config.retweet and not config.retweet_keywords:
+            valid = False
+            print("ERROR - config.retweet feature ON requires you to supply config.retweet_keywords.")
+
+        if config.like and not config.like_keywords:
+            valid = False
+            print("ERROR - config.like feature ON requires you to supply config.like_keywords.")
+
+        if config.follow and not config.follow_keywords:
+            valid = False
+            print("ERROR - config.follow feature ON requires you to supply config.follow_keywords.")
+
+        if config.comment and not all([config.comment_keywords, config.tag_keywords]):
+            valid = False
+            print("ERROR - config.comment feature ON requires you to supply config.comment_keywords and "
+                  "config.tag_keywords.")
+
+        if config.dm and not config.dm_keywords:
+            valid = False
+            print("ERROR - config.dm feature ON requires you to supply config.dm_keywords.")
+
+
+    except Exception as e:
+        valid = False
+        print(f'check_config error: {e}')
+
+    if not valid:
+        raise Exception("There is an error with your config.py file. Please fix errors.")
+
+
 def authenticate():
     try:
         auth = tweepy.OAuthHandler(config.consumer_key, config.consumer_secret)

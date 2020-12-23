@@ -3,6 +3,7 @@ import ContestBot as bot
 
 def main():
     try:
+        bot.check_config()
         api = bot.authenticate()
         tweets = bot.get_tweets(api)
 
@@ -21,4 +22,4 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    bot.check_config()

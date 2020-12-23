@@ -1,11 +1,11 @@
-# LOGIN
+# AUTHENTICATION SETTINGS
 username = ""
 consumer_key = ""
 consumer_secret = ""
 token = ""
 token_secret = ""
 
-# TOGGLE FEATURES ON OR OFF
+# TOGGLE FEATURE SETTINGS
 retweet = True
 like = True
 follow = True
@@ -31,7 +31,7 @@ replies = ["Entering the giveaway", "I really want to win", "Please pick me", "P
 punctuation = ["", "!", "!!", "!!!", "!!!!", "!!!!!", "!!!!!!", ".", "..", "...", "....", ".....", "......"]
 
 
-# KEYWORDS
+# KEYWORD SETTINGS
 contest_keywords = ["giveaway", "contest", "sweepstakes", "to win"]
 
 retweet_keywords = ["rt", "retweet", "share"]

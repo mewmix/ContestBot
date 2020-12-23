@@ -4,6 +4,7 @@ from itertools import product
 import ContestBot
 import config
 
+
 # tweet a variety of test tweets on an account and use them for tests
 
 def test_config():
