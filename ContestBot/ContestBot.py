@@ -141,7 +141,7 @@ def authenticate(logger):
         logger.info("Authentication successful.")
         return tweepy.API(auth, wait_on_rate_limit=True, wait_on_rate_limit_notify=True)
     except tweepy.TweepError as e:
-        raise Exception(f'authenticate tweepy exception: {e}')
+        _tweepy_error_handler(logger, e)
     except Exception as e:
         logger.error(f'authenticate error: {e}')
         raise Exception("Authentication unsuccessful.")
@@ -164,7 +164,7 @@ def get_tweets(logger, api):
         logger.info(f'Scraped {len(all_tweets)} total tweets successfully.')
         return all_tweets
     except tweepy.TweepError as e:
-        raise Exception(f'get_tweets tweepy exception: {e}')
+        _tweepy_error_handler(logger, e)
     except Exception as e:
         logger.error(f'get_tweets error: {e}')
         return False
@@ -186,7 +186,7 @@ def check_tweet(logger, tweet):
         logger.info("Found tweet that does not contain banned users or words.")
         return True
     except tweepy.TweepError as e:
-        raise Exception(f'check_tweet tweepy exception: {e}')
+        _tweepy_error_handler(logger, e)
     except Exception as e:
         logger.error(f'check_tweet error: {e}')
         return False
@@ -265,7 +265,7 @@ def perform_actions(logger, api, tweet, actions):
         time.sleep(sleep)
         return actions_ran
     except tweepy.TweepError as e:
-        raise Exception(f'perform_actions tweepy exception: {e}')
+        _tweepy_error_handler(logger, e)
     except Exception as e:
         logger.error(f'perform_actions error: {e}')
         return False
@@ -280,7 +280,7 @@ def _retweet(logger, api, tweet):
         time.sleep(sleep)
         return True
     except tweepy.TweepError as e:
-        raise Exception(f'_retweet tweepy exception: {e}')
+        _tweepy_error_handler(logger, e)
     except Exception as e:
         logger.error(f'_retweet error: {e}')
         return False
@@ -295,7 +295,7 @@ def _like(logger, api, tweet):
         time.sleep(sleep)
         return True
     except tweepy.TweepError as e:
-        raise Exception(f'_like tweepy exception: {e}')
+        _tweepy_error_handler(logger, e)
     except Exception as e:
         logger.error(f'_like error: {e}')
         return False
@@ -311,7 +311,7 @@ def _follow(logger, api, tweet):
         time.sleep(sleep)
         return True
     except tweepy.TweepError as e:
-        raise Exception(f'_follow tweepy exception: {e}')
+        _tweepy_error_handler(logger, e)
     except Exception as e:
         logger.error(f'_follow error: {e}')
         return False
@@ -334,7 +334,7 @@ def _comment(logger, api, tweet, tag=False):
         time.sleep(sleep)
         return True
     except tweepy.TweepError as e:
-        raise Exception(f'_comment tweepy exception: {e}')
+        _tweepy_error_handler(logger, e)
     except Exception as e:
         logger.error(f'_comment error: {e}')
         return False
@@ -350,7 +350,7 @@ def _dm(logger, api, tweet):
         time.sleep(sleep)
         return True
     except tweepy.TweepError as e:
-        raise Exception(f'_dm tweepy exception: {e}')
+        _tweepy_error_handler(logger, e)
     except Exception as e:
         logger.error(f'_dm error: {e}')
         return False
@@ -365,7 +365,7 @@ def _get_following(logger, api):
         time.sleep(sleep)
         return following
     except tweepy.TweepError as e:
-        raise Exception(f'_get_following tweepy exception: {e}')
+        _tweepy_error_handler(logger, e)
     except Exception as e:
         logger.error(f'_get_following error: {e}')
         return False
@@ -380,7 +380,7 @@ def _unfollow(logger, api, user_id):
         time.sleep(sleep)
         return True
     except tweepy.TweepError as e:
-        raise Exception(f'_unfollow tweepy exception: {e}')
+        _tweepy_error_handler(logger, e)
     except Exception as e:
         logger.error(f'_unfollow error: {e}')
         return False
@@ -415,3 +415,11 @@ def _generate_text(logger):
     except Exception as e:
         logger.error(f'_generate_text error: {e}')
         return False
+
+
+def _tweepy_error_handler(logger, tweep_error):
+    if tweep_error.api_code == 326:
+        logger.critical(f'_error_handler caught {tweep_error}')
+        raise Exception(f'_error_handler terminated ContestBot because: {tweep_error}')
+    else:
+        logger.warning(f'_error_handler caught and ignored: {tweep_error}')
