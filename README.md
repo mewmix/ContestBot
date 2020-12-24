@@ -29,7 +29,7 @@ To Use:
 
 Run Tests:  
 - cd into root project directory (ex: `cd C:\Users\YOURNAME\Desktop\ContestBot`)  
-- `pytest ContestBot/tests.py`  
+- `pytest ContestBot/tests.py -s`  
 
 Disclaimer:  
 This application is for educational purposes only. There is a possibility of Twitter suspension from using this application. I am not responsible for misuse or abuse of this application or any variants of it. I am not responsible for any damages or liability incurred as a result of using this application. Use at your own risk.

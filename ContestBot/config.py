@@ -5,18 +5,22 @@ consumer_secret = ""
 token = ""
 token_secret = ""
 
+# LOGGING SETTINGS
+level = 0   # 0 for all, 1 for debug, 2 for info, 3 for warning, 4 for error, 5 for critical
+
 # TOGGLE FEATURE SETTINGS
 retweet = True
 like = True
 follow = True
 comment = True
-dm = True
+dm = False   # suggest leaving this off as you cannot send DMs to users that don't follow you
 
 # GENERAL SETTINGS
-count = 500  # num of tweets to search for each contest_keyword per iteration of the infinite main loop
+count = 1000  # num of tweets to search for each contest_keyword per iteration of the infinite main loop
+max_following = 347  # max number of following before it starts FIFO unfollowing a person before each new follow, 2000 is max value
 
 # SLEEP SETTINGS
-sleep_randomizer = 3  # random sleep from 0 to sleep_randomizer after each action (set to 0 for no randomization)
+sleep_randomizer = 30  # random sleep from 0 to sleep_randomizer after each action (set to 0 for no randomization)
 
 # REPLY SETTINGS
 tag_handles = ["pluggrr", "cheapprr", "deallrr"]
@@ -30,9 +34,8 @@ replies = ["Entering the giveaway", "I really want to win", "Please pick me", "P
 
 punctuation = ["", "!", "!!", "!!!", "!!!!", "!!!!!", "!!!!!!", ".", "..", "...", "....", ".....", "......"]
 
-
 # KEYWORD SETTINGS
-contest_keywords = ["giveaway", "contest", "sweepstakes", "to win"]
+contest_keywords = ["giveaway", "contest", "sweepstake", "to win"]
 
 retweet_keywords = ["rt", "retweet", "share"]
 like_keywords = ["like", "favorite", "fav"]
