@@ -57,7 +57,6 @@ def test_find_actions(logger, tweets):
                                "comment": True, "tag": True, "dm": True}
 
 
-
 def test_perform_actions(logger, api, tweets):
     # set config.max_following to 0 so it perform_actions unfollows a user no matter what
     try:
@@ -79,7 +78,10 @@ def test_perform_actions(logger, api, tweets):
 
 
 def test_random_sleep(logger):
-    assert 0 < ContestBot._random_sleep(logger) <= config.sleep_randomizer
+    assert config.sleep_per_action[0] <= ContestBot._random_sleep(logger, config.sleep_per_action[0],
+                                            config.sleep_per_action[1]) <= config.sleep_per_action[1]
+    assert config.sleep_per_tweet[0] <= ContestBot._random_sleep(logger, config.sleep_per_tweet[0],
+                                            config.sleep_per_tweet[1]) <= config.sleep_per_tweet[1]
 
 
 def test_generate_text(logger):

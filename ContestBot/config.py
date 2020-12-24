@@ -6,7 +6,7 @@ token = ""
 token_secret = ""
 
 # LOGGING SETTINGS
-level = 0   # 0 for all, 1 for debug, 2 for info, 3 for warning, 4 for error, 5 for critical
+level = 1   # 1 for debug, 2 for info, 3 for warning, 4 for error, 5 for critical
 
 # TOGGLE FEATURE SETTINGS
 retweet = True
@@ -16,11 +16,12 @@ comment = True
 dm = False   # suggest leaving this off as you cannot send DMs to users that don't follow you
 
 # GENERAL SETTINGS
-count = 1000  # num of tweets to search for each contest_keyword per iteration of the infinite main loop
+count = 100  # num of tweets to search for each contest_keyword per iteration of the infinite main loop
 max_following = 347  # max number of following before it starts FIFO unfollowing a person before each new follow, 2000 is max value
 
 # SLEEP SETTINGS
-sleep_randomizer = 30  # random sleep from 0 to sleep_randomizer after each action (set to 0 for no randomization)
+sleep_per_action = [30, 60]     # [min, max] sleeps this time after each action on a tweet such as rt, like, follow
+sleep_per_tweet = [180, 900]    # [min, max] sleeps this time after all actions have been performed on each tweet
 
 # REPLY SETTINGS
 tag_handles = ["pluggrr", "cheapprr", "deallrr"]
