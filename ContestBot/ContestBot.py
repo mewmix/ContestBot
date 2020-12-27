@@ -156,17 +156,12 @@ def get_tweets(logger, api):
             logger.debug(f'Searching for "{keyword}" keyword.')
             for status in tweepy.Cursor(api.search, lang="en", tweet_mode="extended", q=keyword.lower()).items(
                     config.count):
-                # exhaustive solution to get full text from any type of tweet (due to weird twitter response json data)
-                if hasattr(status, 'retweeted_status'):
-                    try:
-                        tweet = status.retweeted_status.extended_tweet["full_text"]
-                    except:
-                        tweet = status.retweeted_status.text
-                else:
-                    try:
-                        tweet = status.extended_tweet["full_text"]
-                    except AttributeError:
-                        tweet = status.text
+                # status is a retweet
+                try:
+                    tweet = status.retweeted_status.full_text
+                # status is not a retweet
+                except AttributeError:
+                    tweet = status.full_text
                 keyword_tweets.append(tweet)
             logger.debug(f'Found {len(keyword_tweets)} tweets for {keyword}. Appending to list...')
             all_tweets.extend(keyword_tweets)
