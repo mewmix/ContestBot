@@ -152,7 +152,7 @@ def get_tweets(logger, api):
         all_tweets = []
         logger.info("Searching for tweets...")
         for keyword in config.contest_keywords:
-            logger.info(f'Gathering {len(config.count)} tweets with "{keyword}" keyword.')
+            logger.info(f'Gathering {config.count} tweets with "{keyword}" keyword.')
             for status in tweepy.Cursor(api.search, lang="en", tweet_mode="extended", q=keyword.lower()).items(
                     config.count):
                 all_tweets.append(status)
