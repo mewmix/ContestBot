@@ -350,15 +350,12 @@ def _follow(logger, api, tweet):
 
 def _comment(logger, api, tweet, tag=False):
     try:
-        reply_username = tweet.user.screen_name
         comment = _generate_text(logger)
         if tag:
             tag_username = random.choice(config.tag_handles)
-            comment = f'@{reply_username} @{tag_username} {comment}'
-        else:
-            comment = f'@{reply_username} {comment}'
+            comment = f'@{tag_username} {comment}'
 
-        api.update_status(status=comment, in_reply_to_status_id=tweet.id)
+        api.update_status(status=comment, in_reply_to_status_id=tweet.id, auto_populate_reply_metadata=True)
         logger.info("Tweet commented successfully.")
         sleep = _random_sleep(logger, config.sleep_per_action[0], config.sleep_per_action[1])
         logger.info(f'Sleeping for {sleep}s')
