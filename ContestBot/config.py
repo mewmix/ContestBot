@@ -17,7 +17,7 @@ dm = False   # suggest leaving this off as you cannot send DMs to users that don
 
 # GENERAL SETTINGS
 count = 100  # num of tweets to search for each contest_keyword per iteration of the infinite main loop
-max_following = 347  # max number of following before it starts FIFO unfollowing a person before each new follow, 2000 is max value
+max_following = 347  # max number of following before it starts FIFO unfollowing a person before each new follow, 500 is max value
 
 # SLEEP SETTINGS
 sleep_per_action = [30, 60]     # [min, max] sleeps this time after each action on a tweet such as rt, like, follow
