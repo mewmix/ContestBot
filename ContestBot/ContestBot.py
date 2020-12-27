@@ -155,14 +155,8 @@ def get_tweets(logger, api):
             logger.debug(f'Searching for "{keyword}" keyword.')
             for status in tweepy.Cursor(api.search, lang="en", tweet_mode="extended", q=keyword.lower()).items(
                     config.count):
-                # status is a retweet
-                try:
-                    tweet = status.retweeted_status.full_text
-                # status is not a retweet
-                except AttributeError:
-                    tweet = status.full_text
-                all_tweets.append(tweet)
-            logger.debug(f'Finished finding tweets for {keyword}. Tweets list now contains {len(all_tweets)} tweets.')
+                all_tweets.append(status)
+            logger.debug(f'Finished finding tweets for {keyword}. Tweet list now contains {len(all_tweets)} tweets.')
             sleep = _random_sleep(logger, config.sleep_per_action[0], config.sleep_per_action[1])
             logger.info(f'Sleeping for {sleep}s')
             time.sleep(sleep)
@@ -185,7 +179,7 @@ def check_tweet(logger, tweet):
                 return False
         # check if tweet text has any banned words in it (set in config.banned_words)
         if config.banned_words:
-            if any(banned_word.lower() in tweet.full_text.lower() for banned_word in config.banned_words):
+            if any(banned_word.lower() in _get_tweet_text(logger, tweet) for banned_word in config.banned_words):
                 logger.debug("Banned word found in tweet. Tweet invalid.")
                 return False
         logger.info("Found tweet that does not contain banned users or words.")
@@ -198,7 +192,7 @@ def check_tweet(logger, tweet):
 def find_actions(logger, tweet):
     try:
         actions = {"retweet": False, "like": False, "follow": False, "comment": False, "tag": False, "dm": False}
-        lowercase_tweet_text = tweet.full_text.lower()
+        lowercase_tweet_text = _get_tweet_text(logger, tweet)
 
         # check if tweet contains any retweet keywords
         if any(retweet_keyword.lower() in lowercase_tweet_text for retweet_keyword in config.retweet_keywords):
@@ -293,6 +287,18 @@ def perform_actions(logger, api, tweet, actions):
     except Exception as e:
         logger.error(f'perform_actions error: {e}')
         return False
+
+
+def _get_tweet_text(logger, tweet):
+    # status is a retweet
+    try:
+        text = tweet.retweeted_status.full_text
+        logger.debug("Tweet text extracted successfully. Tweet is a retweet.")
+    # status is not a retweet
+    except AttributeError:
+        text = tweet.full_text
+        logger.debug("Tweet text extracted successfully. Tweet is not a retweet.")
+    return text.lower()
 
 
 def _retweet(logger, api, tweet):
