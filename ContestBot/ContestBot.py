@@ -190,8 +190,6 @@ def check_tweet(logger, tweet):
                 return False
         logger.info("Found tweet that does not contain banned users or words.")
         return True
-    except tweepy.TweepError as e:
-        _tweepy_error_handler(logger, e)
     except Exception as e:
         logger.error(f'check_tweet error: {e}')
         return False
