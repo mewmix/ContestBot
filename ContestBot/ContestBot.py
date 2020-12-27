@@ -152,7 +152,6 @@ def get_tweets(logger, api):
         all_tweets = []
         logger.info("Searching for tweets...")
         for keyword in config.contest_keywords:
-            keyword_tweets = []
             logger.debug(f'Searching for "{keyword}" keyword.')
             for status in tweepy.Cursor(api.search, lang="en", tweet_mode="extended", q=keyword.lower()).items(
                     config.count):
@@ -162,9 +161,8 @@ def get_tweets(logger, api):
                 # status is not a retweet
                 except AttributeError:
                     tweet = status.full_text
-                keyword_tweets.append(tweet)
-            logger.debug(f'Found {len(keyword_tweets)} tweets for {keyword}. Appending to list...')
-            all_tweets.extend(keyword_tweets)
+                all_tweets.append(tweet)
+            logger.debug(f'Finished finding tweets for {keyword}. Tweets list now contains {len(all_tweets)} tweets.')
             sleep = _random_sleep(logger, config.sleep_per_action[0], config.sleep_per_action[1])
             logger.info(f'Sleeping for {sleep}s')
             time.sleep(sleep)
