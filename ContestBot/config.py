@@ -45,5 +45,5 @@ comment_keywords = ["reply", "comment"]
 tag_keywords = ["tag", "mention", "friend"]
 dm_keywords = ["message", "dm"]
 
-banned_user_words = ["bot"]
-banned_words = ["join", "download"]
+banned_user_words = ["bot", "bts", "stan", "kpop"]
+banned_words = ["join", "download", "bts", "kpop"]
