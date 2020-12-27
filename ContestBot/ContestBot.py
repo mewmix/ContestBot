@@ -171,6 +171,7 @@ def get_tweets(logger, api):
 
 def check_tweet(logger, tweet):
     try:
+        lowercase_tweet_text = _get_tweet_text(logger, tweet)
         # check if username has any banned user words in it (set in config.banned_user_words)
         if config.banned_user_words:
             if any(banned_user_word.lower() in tweet.user.screen_name.lower() for banned_user_word in
@@ -179,20 +180,20 @@ def check_tweet(logger, tweet):
                 return False
         # check if tweet text has any banned words in it (set in config.banned_words)
         if config.banned_words:
-            if any(banned_word.lower() in _get_tweet_text(logger, tweet) for banned_word in config.banned_words):
+            if any(banned_word.lower() in lowercase_tweet_text for banned_word in config.banned_words):
                 logger.debug("Banned word found in tweet. Tweet invalid.")
                 return False
         logger.info("Found tweet that does not contain banned users or words.")
-        return True
+        return lowercase_tweet_text
     except Exception as e:
         logger.error(f'check_tweet error: {e}')
         return False
 
 
-def find_actions(logger, tweet):
+def find_actions(logger, tweet_text):
     try:
         actions = {"retweet": False, "like": False, "follow": False, "comment": False, "tag": False, "dm": False}
-        lowercase_tweet_text = _get_tweet_text(logger, tweet)
+        lowercase_tweet_text = tweet_text
 
         # check if tweet contains any retweet keywords
         if any(retweet_keyword.lower() in lowercase_tweet_text for retweet_keyword in config.retweet_keywords):
