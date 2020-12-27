@@ -157,7 +157,7 @@ def get_tweets(logger, api):
             # keyword_tweets = api.search(q=keyword.lower(), count=config.count)
             keyword_tweets = [tweet for tweet in
                               tweepy.Cursor(api.search, lang="en", tweet_mode="extended", q=keyword.lower()).items(
-                                  config.count)]
+                                  config.count) if not tweet['retweeted_status']]
             logger.debug(f'Found {len(keyword_tweets)} tweets for {keyword}. Appending to list...')
             all_tweets.extend(keyword_tweets)
             sleep = _random_sleep(logger, config.sleep_per_action[0], config.sleep_per_action[1])
