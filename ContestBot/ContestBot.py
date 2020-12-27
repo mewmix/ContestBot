@@ -149,10 +149,10 @@ def authenticate(logger):
 
 def get_tweets(logger, api):
     try:
-        keyword_tweets = []
         all_tweets = []
         logger.info("Searching for tweets...")
         for keyword in config.contest_keywords:
+            keyword_tweets = []
             logger.debug(f'Searching for "{keyword}" keyword.')
             for status in tweepy.Cursor(api.search, lang="en", tweet_mode="extended", q=keyword.lower()).items(
                     config.count):
