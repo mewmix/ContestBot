@@ -6,7 +6,7 @@ token = ""
 token_secret = ""
 
 # LOGGING SETTINGS
-level = 1   # 1 for debug, 2 for info, 3 for warning, 4 for error, 5 for critical
+level = 2   # 1 for debug, 2 for info, 3 for warning, 4 for error, 5 for critical
 
 # TOGGLE FEATURE SETTINGS
 retweet = True
@@ -40,7 +40,7 @@ contest_keywords = ["giveaway", "contest", "sweepstake", "to win"]
 
 retweet_keywords = ["rt", "retweet", "share"]
 like_keywords = ["like", "favorite", "fav"]
-follow_keywords = ["follow"]
+follow_keywords = ["follow", "mbf", "flw"]
 comment_keywords = ["reply", "comment"]
 tag_keywords = ["tag", "mention", "friend"]
 dm_keywords = ["message", "dm"]

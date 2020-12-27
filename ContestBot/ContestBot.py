@@ -20,7 +20,7 @@ def initialize_logger():
         handler.setFormatter(formatter)
         logger.addHandler(handler)
         logger.setLevel(level)
-        logger.info("Logger initialized successfully.")
+        logger.info("Logger initialized.")
         return logger
     except Exception as e:
         print(f'initialize_logger error: {e}')
@@ -156,11 +156,11 @@ def get_tweets(logger, api):
             for status in tweepy.Cursor(api.search, lang="en", tweet_mode="extended", q=keyword.lower()).items(
                     config.count):
                 all_tweets.append(status)
-            logger.debug(f'Finished finding tweets for {keyword}. Tweet list now contains {len(all_tweets)} tweets.')
+            logger.debug(f'Finished finding tweets for "{keyword}". Tweet list now contains {len(all_tweets)} tweets.')
             sleep = _random_sleep(logger, config.sleep_per_action[0], config.sleep_per_action[1])
-            logger.info(f'Sleeping for {sleep}s')
+            logger.info(f'Sleeping for {sleep}s.')
             time.sleep(sleep)
-        logger.info(f'Scraped {len(all_tweets)} total tweets successfully.')
+        logger.info(f'Scraped {len(all_tweets)} total tweets.')
         return all_tweets
     except tweepy.TweepError as e:
         _tweepy_error_handler(logger, e)
@@ -183,7 +183,7 @@ def check_tweet(logger, tweet):
             if any(banned_word.lower() in lowercase_tweet_text for banned_word in config.banned_words):
                 logger.debug("Banned word found in tweet. Tweet invalid.")
                 return False
-        logger.info("Found tweet that does not contain banned users or words.")
+        logger.debug("Found tweet that does not contain banned users or words.")
         return lowercase_tweet_text
     except Exception as e:
         logger.error(f'check_tweet error: {e}')
@@ -194,37 +194,37 @@ def find_actions(logger, tweet_text):
     try:
         actions = {"retweet": False, "like": False, "follow": False, "comment": False, "tag": False, "dm": False}
         lowercase_tweet_text = tweet_text
+        logger.info("Searching tweet for keywords...")
 
         # check if tweet contains any retweet keywords
         if any(retweet_keyword.lower() in lowercase_tweet_text for retweet_keyword in config.retweet_keywords):
-            logger.debug("Retweet keyword found in tweet.")
+            logger.info("Retweet keyword found in tweet.")
             actions["retweet"] = True
         # check if tweet contains any like keywords
         if any(like_keyword.lower() in lowercase_tweet_text for like_keyword in config.like_keywords):
-            logger.debug("Like keyword found in tweet.")
+            logger.info("Like keyword found in tweet.")
             actions["like"] = True
         # check if tweet contains any follow keywords
         if any(follow_keyword.lower() in lowercase_tweet_text for follow_keyword in config.follow_keywords):
-            logger.debug("Follow keyword found in tweet.")
+            logger.info("Follow keyword found in tweet.")
             actions["follow"] = True
         # check if tweet contains any comment keywords
         if any(comment_keyword.lower() in lowercase_tweet_text for comment_keyword in config.comment_keywords):
-            logger.debug("Comment keyword found in tweet.")
+            logger.info("Comment keyword found in tweet.")
             actions["comment"] = True
         # check if tweet contains any tag keywords
         if any(tag_keyword.lower() in lowercase_tweet_text for tag_keyword in config.tag_keywords):
-            logger.debug("Tag keyword found in tweet.")
+            logger.info("Tag keyword found in tweet.")
             actions["tag"] = True
         # check if tweet contains any dm keywords
         if any(dm_keyword.lower() in lowercase_tweet_text for dm_keyword in config.dm_keywords):
-            logger.debug("Dm keyword found in tweet.")
+            logger.info("Dm keyword found in tweet.")
             actions["dm"] = True
 
         if any(value for value in actions.values()):
-            logger.info("Action(s) found in tweet.")
             return actions
         else:
-            logger.debug("No actions found in tweet.")
+            logger.info("No actions found in tweet. Skipping tweet.")
             return False
     except Exception as e:
         logger.error(f'find_actions error: {e}')
@@ -280,7 +280,7 @@ def perform_actions(logger, api, tweet, actions):
                 return False
         logger.info("All detected actions were performed on tweet.")
         sleep = _random_sleep(logger, config.sleep_per_tweet[0], config.sleep_per_tweet[1])
-        logger.info(f'Sleeping for {sleep}s')
+        logger.info(f'Sleeping for {sleep}s.')
         time.sleep(sleep)
         return actions_ran
     except tweepy.TweepError as e:
@@ -305,9 +305,9 @@ def _get_tweet_text(logger, tweet):
 def _retweet(logger, api, tweet):
     try:
         api.retweet(tweet.id)
-        logger.info("Tweet retweeted successfully.")
+        logger.info("Tweet retweeted.")
         sleep = _random_sleep(logger, config.sleep_per_action[0], config.sleep_per_action[1])
-        logger.info(f'Sleeping for {sleep}s')
+        logger.info(f'Sleeping for {sleep}s.')
         time.sleep(sleep)
         return True
     except tweepy.TweepError as e:
@@ -320,9 +320,9 @@ def _retweet(logger, api, tweet):
 def _like(logger, api, tweet):
     try:
         api.create_favorite(tweet.id)
-        logger.info("Tweet liked successfully.")
+        logger.info("Tweet liked.")
         sleep = _random_sleep(logger, config.sleep_per_action[0], config.sleep_per_action[1])
-        logger.info(f'Sleeping for {sleep}s')
+        logger.info(f'Sleeping for {sleep}s.')
         time.sleep(sleep)
         return True
     except tweepy.TweepError as e:
@@ -336,9 +336,9 @@ def _follow(logger, api, tweet):
     try:
         username = tweet.user.screen_name
         api.create_friendship(username)
-        logger.info("Tweet author followed successfully.")
+        logger.info("Tweet author followed.")
         sleep = _random_sleep(logger, config.sleep_per_action[0], config.sleep_per_action[1])
-        logger.info(f'Sleeping for {sleep}s')
+        logger.info(f'Sleeping for {sleep}s.')
         time.sleep(sleep)
         return True
     except tweepy.TweepError as e:
@@ -356,9 +356,9 @@ def _comment(logger, api, tweet, tag=False):
             comment = f'@{tag_username} {comment}'
 
         api.update_status(status=comment, in_reply_to_status_id=tweet.id, auto_populate_reply_metadata=True)
-        logger.info("Tweet commented successfully.")
+        logger.info("Tweet commented.")
         sleep = _random_sleep(logger, config.sleep_per_action[0], config.sleep_per_action[1])
-        logger.info(f'Sleeping for {sleep}s')
+        logger.info(f'Sleeping for {sleep}s.')
         time.sleep(sleep)
         return True
     except tweepy.TweepError as e:
@@ -372,9 +372,9 @@ def _dm(logger, api, tweet):
     try:
         message = _generate_text(logger)
         api.send_direct_message(tweet.user.id, message)
-        logger.info("Tweet author dm'd successfully.")
+        logger.info("Tweet author dm'd.")
         sleep = _random_sleep(logger, config.sleep_per_action[0], config.sleep_per_action[1])
-        logger.info(f'Sleeping for {sleep}s')
+        logger.info(f'Sleeping for {sleep}s.')
         time.sleep(sleep)
         return True
     except tweepy.TweepError as e:
@@ -389,7 +389,7 @@ def _get_following(logger, api):
         following = api.friends_ids(config.username)
         logger.info(f'User following checked. Current following: {len(following)}')
         sleep = _random_sleep(logger, config.sleep_per_action[0], config.sleep_per_action[1])
-        logger.info(f'Sleeping for {sleep}s')
+        logger.info(f'Sleeping for {sleep}s.')
         time.sleep(sleep)
         return following
     except tweepy.TweepError as e:
@@ -402,9 +402,9 @@ def _get_following(logger, api):
 def _unfollow(logger, api, user_id):
     try:
         api.destroy_friendship(user_id)
-        logger.info("Oldest followed account unfollowed successfully.")
+        logger.info("Oldest following account unfollowed.")
         sleep = _random_sleep(logger, config.sleep_per_action[0], config.sleep_per_action[1])
-        logger.info(f'Sleeping for {sleep}s')
+        logger.info(f'Sleeping for {sleep}s.')
         time.sleep(sleep)
         return True
     except tweepy.TweepError as e:
@@ -433,7 +433,7 @@ def _generate_text(logger):
             reply = reply.upper()
         elif capitalization == "lower":
             reply = reply.lower()
-        logger.info(f'Message generated successfully: {reply}')
+        logger.info(f'Text generated: {reply}')
         return reply
     except Exception as e:
         logger.error(f'_generate_text error: {e}')
@@ -442,9 +442,11 @@ def _generate_text(logger):
 
 def _tweepy_error_handler(logger, tweep_error):
     # raises exception if critical error, returns False if recoverable error, returns True if ignorable error
+    # account has been locked
     if tweep_error.api_code == 326:
         logger.critical(f'tweepy_error_handler caught {tweep_error}')
         raise Exception(f'tweepy_error_handler terminated ContestBot because: {tweep_error}')
+    # tweet already retweeted
     elif tweep_error.api_code == 327:
         logger.warning(f'tweepy_error_handler caught {tweep_error}')
         return False
