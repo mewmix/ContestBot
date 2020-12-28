@@ -199,6 +199,8 @@ def find_actions(logger, tweet_text):
     try:
         actions = {"retweet": False, "like": False, "follow": False, "comment": False, "tag": False, "dm": False}
         lowercase_tweet_text = tweet_text
+        split_text = lowercase_tweet_text.split()
+        logger.debug(f'lowercase_tweet_text: {lowercase_tweet_text}')
         logger.info("Searching tweet for keywords from features that are ON...")
 
         # check if tweet contains any retweet keywords, special case for "rt" since it was returning false positives
@@ -206,8 +208,10 @@ def find_actions(logger, tweet_text):
             for retweet_keyword in config.retweet_keywords:
                 lowercase_retweet_keyword = retweet_keyword.lower()
                 if lowercase_retweet_keyword == "rt":
-                    for word in lowercase_tweet_text:
+                    logger.debug(f'Searching split text for keyword "rt".')
+                    for word in split_text:
                         if word == "rt":
+                            logger.debug(f'Found "rt" in split text.')
                             actions["retweet"] = True
                 else:
                     if lowercase_retweet_keyword in lowercase_tweet_text:
@@ -236,9 +240,16 @@ def find_actions(logger, tweet_text):
         if any(dm_keyword.lower() in lowercase_tweet_text for dm_keyword in config.dm_keywords) and config.dm:
             logger.info("Dm keyword found in tweet.")
             actions["dm"] = True
-
+        # if any actions detected
         if any(value for value in actions.values()):
-            return actions
+            # if only follow action detected
+            if actions.get("follow") and not (
+                    actions.get("retweet") or actions.get("like") or actions.get("comment") or actions.get(
+                "tag") or actions.get("dm")):
+                logger.info("Only follow action found. Skipping tweet.")
+                return False
+            else:
+                return actions
         else:
             logger.info("No actions found in tweet for features that are ON. Skipping tweet.")
             return False
@@ -316,6 +327,18 @@ def _get_tweet_text(logger, tweet):
     return text.lower()
 
 
+def _get_tweet_author(logger, tweet):
+    # status is a retweet
+    try:
+        author = tweet.retweeted_status.user.screen_name
+        logger.debug(f'Tweet is a retweet. Original author is @{author}.')
+    # status is not a retweet
+    except:
+        author = tweet.user.screen_name
+        logger.debug(f'Tweet is not a retweet. Author is @{author}.')
+    return author
+
+
 def _retweet(logger, api, tweet):
     try:
         api.retweet(tweet.id)
@@ -348,9 +371,9 @@ def _like(logger, api, tweet):
 
 def _follow(logger, api, tweet):
     try:
-        username = tweet.user.screen_name
+        username = _get_tweet_author(logger, tweet)
         api.create_friendship(username)
-        logger.info(f'Tweet author ({username}) followed.')
+        logger.info(f'Tweet author @{username} followed.')
         sleep = _random_sleep(logger, config.sleep_per_action[0], config.sleep_per_action[1])
         logger.info(f'Sleeping for {sleep}s.')
         time.sleep(sleep)

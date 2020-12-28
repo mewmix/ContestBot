@@ -6,7 +6,7 @@ token = ""
 token_secret = ""
 
 # LOGGING SETTINGS
-level = 2  # 1 for debug, 2 for info, 3 for warning, 4 for error, 5 for critical
+level = 1  # 1 for debug, 2 for info, 3 for warning, 4 for error, 5 for critical
 
 # TOGGLE FEATURE SETTINGS
 retweet = True
@@ -17,7 +17,7 @@ dm = False  # suggest leaving this off as you cannot send DMs to users that don'
 
 # GENERAL SETTINGS
 search_type = 1  # 1 for "mixed", 2 for "recent", 3 for "popular" tweets
-count = 30  # num of tweets to search for each contest_keyword per iteration of the infinite main loop
+count = 50  # num of tweets to search for each contest_keyword per iteration of the infinite main loop
 max_following = 347  # max number of following before it starts FIFO unfollowing a person before each new follow, 500 is max value
 
 # SLEEP SETTINGS
@@ -39,7 +39,7 @@ punctuation = ["", "!", "!!", "!!!", "!!!!", "!!!!!", "!!!!!!", ".", "..", "..."
 # KEYWORD SETTINGS
 contest_keywords = ["giveaway", "contest", "sweepstake", "to win"]
 
-retweet_keywords = ["rt", "retweet", "share"]
+retweet_keywords = ["rt", "retweet", "share", "-rt", "#rt"]
 like_keywords = ["like", "favorite", "fav"]
 follow_keywords = ["follow", "mbf", "flw"]
 comment_keywords = ["reply", "comment"]
