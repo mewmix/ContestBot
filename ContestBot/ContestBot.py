@@ -478,15 +478,13 @@ def _generate_text(logger):
 
 
 def _tweepy_error_handler(logger, tweep_error):
-    # raises exception if critical error, returns False if recoverable error, returns True if ignorable error
+    """
+    :param logger: logger instance
+    :param tweep_error: pass the caught exception from caller
+    :return: raises exception if critical error, returns False if recoverable error
+    """
+    logger.warning(f'_tweepy_error_handler caught {tweep_error}')
     # account has been locked
     if tweep_error.api_code == 326:
-        logger.critical(f'tweepy_error_handler caught {tweep_error}')
-        raise Exception(f'tweepy_error_handler terminated ContestBot because: {tweep_error}')
-    # tweet already retweeted
-    elif tweep_error.api_code == 327:
-        logger.warning(f'tweepy_error_handler caught {tweep_error}')
-        return False
-    else:
-        logger.warning(f'tweepy_error_handler caught and ignored: {tweep_error}')
-        return True
+        raise Exception(f'_tweepy_error_handler terminated ContestBot because: {tweep_error}')
+    return False
