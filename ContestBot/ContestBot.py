@@ -59,6 +59,10 @@ def check_config(logger):
             logger.error("Missing toggle setting(s) in config.py.")
 
         # check general settings
+        if 1 > config.search_type > 3:
+            valid = False
+            logger.error("config.search_type must be a value between 1 and 3.")
+
         if config.count <= 0:
             valid = False
             logger.error("Invalid config.count setting. Must be greater than 0.")
@@ -149,12 +153,13 @@ def authenticate(logger):
 
 def get_tweets(logger, api):
     try:
+        search_types = {1: "mixed", 2: "recent", 3: "popular"}
         all_tweets = []
         logger.info("Searching for tweets...")
         for keyword in config.contest_keywords:
             logger.info(f'Gathering {config.count} tweets with "{keyword}" keyword.')
-            for status in tweepy.Cursor(api.search, lang="en", tweet_mode="extended", q=keyword.lower()).items(
-                    config.count):
+            for status in tweepy.Cursor(api.search, lang="en", result_type=search_types.get(config.search_type),
+                                        tweet_mode="extended", q=keyword.lower()).items(config.count):
                 all_tweets.append(status)
             logger.debug(f'Finished finding tweets for "{keyword}". Tweet list now contains {len(all_tweets)} tweets.')
             sleep = _random_sleep(logger, config.sleep_per_action[0], config.sleep_per_action[1])
@@ -194,37 +199,48 @@ def find_actions(logger, tweet_text):
     try:
         actions = {"retweet": False, "like": False, "follow": False, "comment": False, "tag": False, "dm": False}
         lowercase_tweet_text = tweet_text
-        logger.info("Searching tweet for keywords...")
+        logger.info("Searching tweet for keywords from features that are ON...")
 
-        # check if tweet contains any retweet keywords
-        if any(retweet_keyword.lower() in lowercase_tweet_text for retweet_keyword in config.retweet_keywords):
-            logger.info("Retweet keyword found in tweet.")
-            actions["retweet"] = True
+        # check if tweet contains any retweet keywords, special case for "rt" since it was returning false positives
+        if config.retweet:
+            for retweet_keyword in config.retweet_keywords:
+                lowercase_retweet_keyword = retweet_keyword.lower()
+                if lowercase_retweet_keyword == "rt":
+                    for word in lowercase_tweet_text:
+                        if word == "rt":
+                            actions["retweet"] = True
+                else:
+                    if lowercase_retweet_keyword in lowercase_tweet_text:
+                        actions["retweet"] = True
+            if actions.get("retweet"):
+                logger.info("Retweet keyword found in tweet.")
         # check if tweet contains any like keywords
-        if any(like_keyword.lower() in lowercase_tweet_text for like_keyword in config.like_keywords):
+        if any(like_keyword.lower() in lowercase_tweet_text for like_keyword in config.like_keywords) and config.like:
             logger.info("Like keyword found in tweet.")
             actions["like"] = True
         # check if tweet contains any follow keywords
-        if any(follow_keyword.lower() in lowercase_tweet_text for follow_keyword in config.follow_keywords):
+        if any(follow_keyword.lower() in lowercase_tweet_text for follow_keyword in
+               config.follow_keywords) and config.follow:
             logger.info("Follow keyword found in tweet.")
             actions["follow"] = True
         # check if tweet contains any comment keywords
-        if any(comment_keyword.lower() in lowercase_tweet_text for comment_keyword in config.comment_keywords):
+        if any(comment_keyword.lower() in lowercase_tweet_text for comment_keyword in
+               config.comment_keywords) and config.comment:
             logger.info("Comment keyword found in tweet.")
             actions["comment"] = True
         # check if tweet contains any tag keywords
-        if any(tag_keyword.lower() in lowercase_tweet_text for tag_keyword in config.tag_keywords):
+        if any(tag_keyword.lower() in lowercase_tweet_text for tag_keyword in config.tag_keywords) and config.comment:
             logger.info("Tag keyword found in tweet.")
             actions["tag"] = True
         # check if tweet contains any dm keywords
-        if any(dm_keyword.lower() in lowercase_tweet_text for dm_keyword in config.dm_keywords):
+        if any(dm_keyword.lower() in lowercase_tweet_text for dm_keyword in config.dm_keywords) and config.dm:
             logger.info("Dm keyword found in tweet.")
             actions["dm"] = True
 
         if any(value for value in actions.values()):
             return actions
         else:
-            logger.info("No actions found in tweet. Skipping tweet.")
+            logger.info("No actions found in tweet for features that are ON. Skipping tweet.")
             return False
     except Exception as e:
         logger.error(f'find_actions error: {e}')
@@ -235,44 +251,42 @@ def perform_actions(logger, api, tweet, actions):
     actions_ran = {"retweet": False, "like": False, "unfollow": False, "follow": False, "comment": False, "tag": False,
                    "dm": False}
     try:
-        if actions.get("retweet") and config.retweet:
+        if actions.get("retweet"):
             retweet = _retweet(logger, api, tweet)
             actions_ran["retweet"] = retweet
             if not retweet:
                 logger.warning("Problem retweeting. Skipping tweet.")
                 return False
-        if actions.get("like") and config.like:
+        if actions.get("like"):
             like = _like(logger, api, tweet)
             actions_ran["like"] = like
             if not like:
                 logger.warning("Problem liking. Skipping tweet.")
                 return False
-        if actions.get("follow") and config.follow:
+        if actions.get("follow"):
             following = _get_following(logger, api)
-            if len(following) >= config.max_following:
+            while len(following) >= config.max_following:
                 unfollow = _unfollow(logger, api, following[0])
                 actions_ran["unfollow"] = unfollow
                 if not unfollow:
-                    logger.warning("Problem unfollowing. Skipping tweet.")
-                    return False
+                    logger.warning("Problem unfollowing.")
             follow = _follow(logger, api, tweet)
             actions_ran["follow"] = follow
             if not follow:
-                logger.warning("Problem following. Skipping tweet.")
-                return False
-        if actions.get("comment") and config.comment and not actions.get("tag"):
+                logger.warning("Problem following.")
+        if actions.get("comment") and not actions.get("tag"):
             comment = _comment(logger, api, tweet)
             actions_ran["comment"] = comment
             if not comment:
-                logger.wanring("Problem commenting. Skipping tweet.")
+                logger.warning("Problem commenting. Skipping tweet.")
                 return False
-        if actions.get("tag") and config.comment:
+        if actions.get("tag"):
             tag = _comment(logger, api, tweet, tag=True)
             actions_ran["tag"] = tag
             if not tag:
                 logger.warning("Problem tagging. Skipping tweet.")
                 return False
-        if actions.get("dm") and config.dm:
+        if actions.get("dm"):
             dm = _dm(logger, api, tweet)
             actions_ran["dm"] = dm
             if not dm:
@@ -336,7 +350,7 @@ def _follow(logger, api, tweet):
     try:
         username = tweet.user.screen_name
         api.create_friendship(username)
-        logger.info("Tweet author followed.")
+        logger.info(f'Tweet author ({username}) followed.')
         sleep = _random_sleep(logger, config.sleep_per_action[0], config.sleep_per_action[1])
         logger.info(f'Sleeping for {sleep}s.')
         time.sleep(sleep)
