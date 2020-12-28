@@ -39,8 +39,8 @@ punctuation = ["", "!", "!!", "!!!", "!!!!", "!!!!!", "!!!!!!", ".", "..", "..."
 # KEYWORD SETTINGS
 contest_keywords = ["giveaway", "contest", "sweepstake", "to win"]
 
-retweet_keywords = ["rt", "retweet", "share", "-rt", "#rt"]
-like_keywords = ["like", "favorite", "fav"]
+retweet_keywords = ["rt", "retweet", "share", "-rt", "#rt", "🔁"]
+like_keywords = ["like", "favorite", "fav", "❤️"]
 follow_keywords = ["follow", "mbf", "flw"]
 comment_keywords = ["reply", "comment"]
 tag_keywords = ["tag", "mention", "friend"]
