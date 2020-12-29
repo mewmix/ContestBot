@@ -236,6 +236,14 @@ def get_tweets(logger, api, search_type=config.search_type):
 def check_tweet(logger, tweet):
     try:
         lowercase_tweet_text = _get_tweet_text(logger, tweet)
+        # check if tweet has already been liked
+        if tweet.favorited:
+            logger.info("Tweet already liked. Skipping tweet.")
+            return False
+        # check if tweet has already been retweeted
+        if tweet.retweeted:
+            logger.info("Tweet already retweeted. Skipping tweet.")
+            return False
         # check if username has any banned user words in it (set in config.banned_user_words)
         if config.banned_user_words:
             if any(banned_user_word.lower() in tweet.user.screen_name.lower() for banned_user_word in
