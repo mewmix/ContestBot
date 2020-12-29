@@ -14,11 +14,16 @@ def initialize_logger():
         level = levels.get(config.level)
 
         logger = logging.getLogger("ContestBot")
-
-        handler = logging.StreamHandler(sys.stdout)
         formatter = logging.Formatter('%(asctime)s - %(levelname)-s - %(message)s', datefmt="%H:%M:%S")
-        handler.setFormatter(formatter)
-        logger.addHandler(handler)
+
+        console_handler = logging.StreamHandler(sys.stdout)
+        console_handler.setFormatter(formatter)
+        logger.addHandler(console_handler)
+
+        file_handler = logging.FileHandler('ContestBot.log')
+        file_handler.setFormatter(formatter)
+        logger.addHandler(file_handler)
+
         logger.setLevel(level)
         logger.debug("Logger initialized.")
         return logger
@@ -360,9 +365,6 @@ def perform_actions(logger, api, tweet, actions):
         return actions_ran
     except tweepy.TweepError as e:
         _tweepy_error_handler(logger, e)
-    except Exception as e:
-        logger.error(f'perform_actions error: {e}')
-        return False
 
 
 def get_next_search_type(logger, current_search_type):
