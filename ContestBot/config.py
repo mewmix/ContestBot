@@ -16,13 +16,14 @@ comment = True
 dm = False  # suggest leaving this off as you cannot send DMs to users that don't follow you
 
 # GENERAL SETTINGS
-search_type = 1  # 1 for "mixed", 2 for "recent", 3 for "popular" tweets
-count = 50  # num of tweets to search for each contest_keyword per iteration of the infinite main loop
+search_type = "mixed"  # "mixed", "recent", or "popular". Can also use ContestBot.get_next_search_mode to iterate modes
+include_retweets = True  # include in search results. True sometimes results in some duplicate but usually more quality tweets
+count = 100  # num of tweets to search for each contest_keyword per iteration of the infinite main loop
 max_following = 347  # max number of following before it starts FIFO unfollowing a person before each new follow, 500 is max value
 
 # SLEEP SETTINGS
-sleep_per_action = [30, 60]  # [min, max] sleeps this time after each action on a tweet such as rt, like, follow
-sleep_per_tweet = [180, 600]  # [min, max] sleeps this time after all actions have been performed on each tweet
+sleep_per_action = [20, 40]  # [min, max] sleeps this time after each action on a tweet such as rt, like, follow
+sleep_per_tweet = [180, 500]  # [min, max] sleeps this time after all actions have been performed on each tweet
 
 # REPLY SETTINGS
 tag_handles = ["pluggrr", "cheapprr", "deallrr"]
@@ -37,9 +38,9 @@ replies = ["Entering the giveaway", "I really want to win", "Please pick me", "P
 punctuation = ["", "!", "!!", "!!!", "!!!!", "!!!!!", "!!!!!!", ".", "..", "...", "....", ".....", "......"]
 
 # KEYWORD SETTINGS
-contest_keywords = ["giveaway", "contest", "sweepstake", "to win"]
+contest_keywords = ["giveaway", "contest", "sweepstake"]
 
-retweet_keywords = ["rt", "retweet", "share", "-rt", "#rt", "🔁"]
+retweet_keywords = ["rt", "retweet", "-rt", "#rt", "🔁", "rt,", "rt.", "rt!"]
 like_keywords = ["like", "favorite", "fav", "❤️"]
 follow_keywords = ["follow", "mbf", "flw"]
 comment_keywords = ["reply", "comment"]
@@ -47,4 +48,4 @@ tag_keywords = ["tag", "mention", "friend"]
 dm_keywords = ["message", "dm"]
 
 banned_user_words = ["bot", "bts", "stan", "kpop"]
-banned_words = ["join", "download", "bts", "kpop", "album", "gcash", "subscribe", "answer", "link"]
+banned_words = ["join", "download", "bts", "kpop", "album", "gcash", "subscribe", "answer", "robux"]
