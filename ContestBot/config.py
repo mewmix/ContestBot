@@ -18,6 +18,7 @@ dm = False  # suggest leaving this off as you cannot send DMs to users that don'
 # GENERAL SETTINGS
 search_type = "mixed"  # "mixed", "recent", or "popular". Can also use ContestBot.get_next_search_mode() to iterate modes
 include_retweets = True  # include in search results. True sometimes results in some duplicate but usually more quality tweets
+include_replies = False  # include in search results. Replies are often times NOT contests/giveaways
 count = 300  # num of tweets to search for each contest_keyword per iteration of the infinite main loop
 max_following = [1800, 1950]  # [min, max] random choice of max_following before ContestBot._unfollow_mode() is triggered, must be less than 2000
 unfollow_range = [200, 350]  # [min, max] random choice of users to unfollow in total for a run of ContestBot._unfollow_mode()

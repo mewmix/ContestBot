@@ -67,6 +67,10 @@ def check_config(logger):
             valid = False
             logger.error("config.include_retweets must be True or False.")
 
+        if not type(config.include_replies) == bool:
+            valid = False
+            logger.error("config.include_replies must be True or False.")
+
         if config.count <= 0:
             valid = False
             logger.error("Invalid config.count setting. Must be greater than 0.")
@@ -195,12 +199,18 @@ def get_tweets(logger, api, search_type=config.search_type):
         logger.info("Searching for tweets...")
         logger.info(f'Search type: {search_type}')
         for keyword in config.contest_keywords:
-            if not config.include_retweets:
-                logger.debug("Not including retweeted statuses.")
-                search_keyword = f'{keyword.lower()} -filter:retweets'
+            search_keyword = keyword.lower()
+            if not config.include_retweets and not config.include_replies:
+                logger.debug("Not including retweets or replies.")
+                search_keyword = f'{search_keyword} -filter:retweets AND -filter:replies'
+            elif not config.include_retweets and config.include_replies:
+                logger.debug("Not including retweets.")
+                search_keyword = f'{search_keyword} -filter:retweets'
+            elif not config.include_replies and config.include_retweets:
+                logger.debug("Not including replies.")
+                search_keyword = f'{search_keyword} -filter:replies'
             else:
-                logger.debug("Including retweeted statuses.")
-                search_keyword = keyword.lower()
+                logger.debug("No retweet or reply filters added to search keyword.")
             logger.info(f'Gathering {config.count} tweets with "{search_keyword}" keyword.')
             for status in tweepy.Cursor(api.search, lang="en", result_type=search_type,
                                         tweet_mode="extended", q=search_keyword).items(config.count):
