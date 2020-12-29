@@ -25,7 +25,7 @@ unfollow_range = [200, 350]  # [min, max] random choice of users to unfollow in 
 
 # SLEEP SETTINGS
 sleep_per_tweet = [200, 500]  # [min, max] random sleeps this time after all actions have been performed on each tweet
-sleep_per_action = [40, 60]  # [min, max] random sleeps this time after each action on a tweet such as rt, like, follow
+sleep_per_action = [30, 60]  # [min, max] random sleeps this time after each action on a tweet such as rt, like, follow
 sleep_per_unfollow = [200, 350]  # [min, max] random sleeps this time after each unfollow in ContestBot._unfollow()
 sleep_unfollow_mode = [700, 1000]   # [min, max] random sleeps this time at start and finish of ContestBot._unfollow_mode()
 

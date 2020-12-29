@@ -17,7 +17,7 @@ def main():
                 logger.info("--------------------------------------------------")
                 logger.info(f'Tweet number: {tweet_num}')
                 logger.info("--------------------------------------------------")
-                tweet_text = bot.check_tweet(logger, tweet)
+                tweet_text = bot.check_tweet(logger, api, tweet)
                 if tweet_text:
                     actions = bot.find_actions(logger, tweet_text)
                     if actions:

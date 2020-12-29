@@ -233,8 +233,11 @@ def get_tweets(logger, api, search_type=config.search_type):
         return False
 
 
-def check_tweet(logger, tweet):
+def check_tweet(logger, api, tweet):
     try:
+        # workaround since tweet.favorited/retweeted is not supported on search tweets. Uses get_status to circumvent
+        tweet = api.get_status(tweet.id)
+
         lowercase_tweet_text = _get_tweet_text(logger, tweet)
         # check if tweet has already been liked
         if tweet.favorited:
