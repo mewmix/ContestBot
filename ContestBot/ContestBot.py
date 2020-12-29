@@ -372,7 +372,7 @@ def get_next_search_type(logger, current_search_type):
 
 def _get_random_max_following(logger):
     random_max_following = random.randint(config.max_following[0], config.max_following[1])
-    logger.info(f'Random max following: {random_max_following}')
+    logger.debug(f'Random max following: {random_max_following}')
     return random_max_following
 
 
