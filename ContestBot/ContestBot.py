@@ -235,16 +235,15 @@ def get_tweets(logger, api, search_type=config.search_type):
 
 def check_tweet(logger, api, tweet):
     try:
-        # workaround since tweet.favorited/retweeted is not supported on search tweets. Uses get_status to circumvent
-        tweet = api.get_status(tweet.id)
-
         lowercase_tweet_text = _get_tweet_text(logger, tweet)
+        # workaround since tweet.favorited/retweeted is not supported on search tweets. Uses get_status to circumvent
+        status = api.get_status(tweet.id)
         # check if tweet has already been liked
-        if tweet.favorited:
+        if status.favorited:
             logger.info("Tweet already liked. Skipping tweet.")
             return False
         # check if tweet has already been retweeted
-        if tweet.retweeted:
+        if status.retweeted:
             logger.info("Tweet already retweeted. Skipping tweet.")
             return False
         # check if username has any banned user words in it (set in config.banned_user_words)
@@ -258,7 +257,7 @@ def check_tweet(logger, api, tweet):
             if any(banned_word.lower() in lowercase_tweet_text for banned_word in config.banned_words):
                 logger.info("Banned word found in tweet. Skipping tweet.")
                 return False
-        logger.debug("Found tweet that does not contain banned users or words.")
+        logger.debug("Found tweet that does not contain banned users, banned words, or already liked/retweeted.")
         return lowercase_tweet_text
     except Exception as e:
         logger.error(f'check_tweet error: {e}')
