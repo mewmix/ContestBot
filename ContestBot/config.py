@@ -20,7 +20,7 @@ search_type = "mixed"  # "mixed", "recent", or "popular". Can also use ContestBo
 include_retweets = True  # include in search results. True sometimes results in some duplicate but usually more quality tweets
 count = 300  # num of tweets to search for each contest_keyword per iteration of the infinite main loop
 max_following = [1800, 1950]  # [min, max] random choice of max_following before ContestBot._unfollow_mode() is triggered, must be less than 2000
-unfollow_range = [100, 250]  # [min, max] random choice of users to unfollow in total for a run of ContestBot._unfollow_mode()
+unfollow_range = [200, 350]  # [min, max] random choice of users to unfollow in total for a run of ContestBot._unfollow_mode()
 
 # SLEEP SETTINGS
 sleep_per_tweet = [180, 500]  # [min, max] random sleeps this time after all actions have been performed on each tweet
