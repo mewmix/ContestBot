@@ -71,12 +71,27 @@ def check_config(logger):
             valid = False
             logger.error("Invalid config.count setting. Must be greater than 0.")
 
-        if config.follow and 0 >= config.max_following > 2000:
+        if config.follow and (config.max_following[0] > config.max_following[1] or config.max_following[0] < 0 or
+                              config.max_following[1] > 2000 or config.max_following[1]) < 0:
             valid = False
             logger.error("config.follow feature ON requires you to supply config.max_following greater than 0 and "
-                         "less than 2000.")
+                         "less than 2000. Min should be > 0, Max should be < 2000.")
+
+        if config.follow and (config.unfollow_range[0] > config.unfollow_range[1] or config.unfollow_range[0] < 0 or
+                              config.unfollow_range[1] < 0):
+            valid = False
+            logger.error(
+                "config.follow feature ON requires you to supply config.unfollow_range greater than 0. Min should be "
+                "< Max and both should be > 0.")
 
         # check sleep settings
+        if (config.sleep_per_tweet[0] < 0) or (config.sleep_per_tweet[0] > config.sleep_per_tweet[1]) or (
+                config.sleep_per_tweet[1] < 0):
+            valid = False
+            logger.error(
+                "Invalid config.sleep_per_tweet setting. Each value must be 0 or greater and second value cannot be "
+                "larger than first.")
+
         if (config.sleep_per_action[0] < 0) or (config.sleep_per_action[0] > config.sleep_per_action[1]) or (
                 config.sleep_per_action[1] < 0):
             valid = False
@@ -84,11 +99,20 @@ def check_config(logger):
                 "Invalid config.sleep_per_action setting. Each value must be 0 or greater and second value cannot be "
                 "larger than first.")
 
-        if (config.sleep_per_tweet[0] < 0) or (config.sleep_per_tweet[0] > config.sleep_per_tweet[1]) or (
-                config.sleep_per_tweet[1] < 0):
+        if config.follow and (
+                (config.sleep_per_unfollow[0] < 0) or (config.sleep_per_unfollow[0] > config.sleep_per_unfollow[1]) or (
+                config.sleep_per_unfollow[1] < 0)):
             valid = False
             logger.error(
-                "Invalid config.sleep_per_tweet setting. Each value must be 0 or greater and second value cannot be "
+                "Invalid config.sleep_per_unfollow setting. Each value must be 0 or greater and second value cannot be "
+                "larger than first.")
+
+        if config.follow and ((config.sleep_unfollow_mode[0] < 0) or (
+                config.sleep_unfollow_mode[0] > config.sleep_unfollow_mode[1]) or (
+                                      config.sleep_unfollow_mode[1] < 0)):
+            valid = False
+            logger.error(
+                "Invalid config.sleep_unfollow_mode setting. Each value must be 0 or greater and second value cannot be "
                 "larger than first.")
 
         # check reply settings
@@ -279,7 +303,7 @@ def find_actions(logger, tweet_text):
 
 
 def perform_actions(logger, api, tweet, actions):
-    actions_ran = {"retweet": False, "like": False, "unfollow": False, "follow": False, "comment": False, "tag": False,
+    actions_ran = {"retweet": False, "like": False, "follow": False, "comment": False, "tag": False,
                    "dm": False}
     try:
         if actions.get("retweet"):
@@ -296,11 +320,9 @@ def perform_actions(logger, api, tweet, actions):
                 return False
         if actions.get("follow"):
             following = _get_following(logger, api)
-            while len(following) >= config.max_following:
-                unfollow = _unfollow(logger, api, following.pop())
-                actions_ran["unfollow"] = unfollow
-                if not unfollow:
-                    logger.warning("Problem unfollowing.")
+            max_following = _get_random_max_following(logger)
+            if len(following) > max_following:
+                _unfollow_mode(logger, api, following)
             follow = _follow(logger, api, tweet)
             actions_ran["follow"] = follow
             if not follow:
@@ -348,6 +370,12 @@ def get_next_search_type(logger, current_search_type):
     return new_search_type
 
 
+def _get_random_max_following(logger):
+    random_max_following = random.randint(config.max_following[0], config.max_following[1])
+    logger.info(f'Random max following: {random_max_following}')
+    return random_max_following
+
+
 def _get_tweet_text(logger, tweet):
     # status is a retweet
     try:
@@ -370,6 +398,30 @@ def _get_tweet_author(logger, tweet):
         author = tweet.user.screen_name
         logger.debug(f'Tweet is not a retweet. Author is @{author}.')
     return author
+
+
+def _unfollow_mode(logger, api, following):
+    try:
+        total_to_unfollow = random.randint(config.unfollow_range[0], config.unfollow_range[1])
+        target_following = len(following) - total_to_unfollow
+        logger.info("--------------------------------------------------")
+        logger.info("Starting unfollow mode...")
+        logger.info(f'Unfollowing {total_to_unfollow} users.')
+        logger.info("--------------------------------------------------")
+        _random_sleep(logger, config.sleep_unfollow_mode[0], config.sleep_unfollow_mode[1])
+        while len(following) > target_following:
+            unfollow = _unfollow(logger, api, following.pop())
+            if not unfollow:
+                logger.warning("Problem unfollowing. Skipping user.")
+            following = _get_following(logger, api)
+            unfollow_remaining = len(following) - total_to_unfollow
+            logger.info(f'{unfollow_remaining} user(s) remaining to unfollow.')
+        logger.info("Unfollow mode completed.")
+        _random_sleep(logger, config.sleep_unfollow_mode[0], config.sleep_unfollow_mode[1])
+    except Exception as e:
+        logger.warning(f'_unfollow_mode_error: {e}')
+        logger.warning(f'Exiting unfollow mode.')
+        return False
 
 
 def _retweet(logger, api, tweet):
@@ -465,7 +517,7 @@ def _unfollow(logger, api, user_id):
         username = api.get_user(user_id).screen_name
         api.destroy_friendship(username)
         logger.info(f'Unfollowed: @{username}')
-        _random_sleep(logger, config.sleep_per_action[0], config.sleep_per_action[1])
+        _random_sleep(logger, config.sleep_per_unfollow[0], config.sleep_per_unfollow[1])
         return True
     except tweepy.TweepError as e:
         return _tweepy_error_handler(logger, e)
@@ -510,5 +562,7 @@ def _tweepy_error_handler(logger, tweep_error):
     logger.warning(f'_tweepy_error_handler caught {tweep_error}')
     # account has been locked
     if tweep_error.api_code == 326:
-        raise Exception(f'_tweepy_error_handler terminated ContestBot because: {tweep_error}')
+        raise Exception(f'Terminated because account is probably banned or limited.')
+    elif tweep_error.api_code == 261:
+        raise Exception(f'Terminated because app is probably limited.')
     return False

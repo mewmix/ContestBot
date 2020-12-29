@@ -16,14 +16,17 @@ comment = True
 dm = False  # suggest leaving this off as you cannot send DMs to users that don't follow you
 
 # GENERAL SETTINGS
-search_type = "mixed"  # "mixed", "recent", or "popular". Can also use ContestBot.get_next_search_mode to iterate modes
+search_type = "mixed"  # "mixed", "recent", or "popular". Can also use ContestBot.get_next_search_mode() to iterate modes
 include_retweets = True  # include in search results. True sometimes results in some duplicate but usually more quality tweets
 count = 300  # num of tweets to search for each contest_keyword per iteration of the infinite main loop
-max_following = 153  # max number of following before it starts FIFO unfollowing a person before each new follow, 2000 is max value
+max_following = [1800, 1950]  # [min, max] random choice of max_following before ContestBot._unfollow_mode() is triggered, must be less than 2000
+unfollow_range = [100, 250]  # [min, max] random choice of users to unfollow in total for a run of ContestBot._unfollow_mode()
 
 # SLEEP SETTINGS
-sleep_per_action = [20, 40]  # [min, max] sleeps this time after each action on a tweet such as rt, like, follow
-sleep_per_tweet = [180, 500]  # [min, max] sleeps this time after all actions have been performed on each tweet
+sleep_per_tweet = [180, 500]  # [min, max] random sleeps this time after all actions have been performed on each tweet
+sleep_per_action = [20, 40]  # [min, max] random sleeps this time after each action on a tweet such as rt, like, follow
+sleep_per_unfollow = [200, 350]  # [min, max] random sleeps this time after each unfollow in ContestBot._unfollow()
+sleep_unfollow_mode = [700, 1000]   # [min, max] random sleeps this time at start and finish of ContestBot._unfollow_mode()
 
 # REPLY SETTINGS
 tag_handles = ["pluggrr", "cheapprr", "deallrr"]
