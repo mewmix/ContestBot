@@ -297,7 +297,7 @@ def perform_actions(logger, api, tweet, actions):
         if actions.get("follow"):
             following = _get_following(logger, api)
             while len(following) >= config.max_following:
-                unfollow = _unfollow(logger, api, following[0])
+                unfollow = _unfollow(logger, api, following.pop())
                 actions_ran["unfollow"] = unfollow
                 if not unfollow:
                     logger.warning("Problem unfollowing.")
@@ -420,7 +420,7 @@ def _comment(logger, api, tweet, tag=False):
             comment = f'@{tag_username} {comment}'
 
         api.update_status(status=comment, in_reply_to_status_id=tweet.id, auto_populate_reply_metadata=True)
-        logger.info("Tweet commented.")
+        logger.info(f'Commented: {comment}')
         _random_sleep(logger, config.sleep_per_action[0], config.sleep_per_action[1])
         return True
     except tweepy.TweepError as e:
@@ -447,10 +447,12 @@ def _dm(logger, api, tweet):
 
 def _get_following(logger, api):
     try:
-        following = api.friends_ids(config.username)
-        logger.info(f'Current following: {len(following)}')
+        follower_ids = []
+        for user in tweepy.Cursor(api.friends_ids, screen_name=config.username, count=5000).items():
+            follower_ids.append(user)
+        logger.info(f'Current following: {len(follower_ids)}')
         _random_sleep(logger, config.sleep_per_action[0], config.sleep_per_action[1])
-        return following
+        return follower_ids
     except tweepy.TweepError as e:
         return _tweepy_error_handler(logger, e)
     except Exception as e:
@@ -460,8 +462,9 @@ def _get_following(logger, api):
 
 def _unfollow(logger, api, user_id):
     try:
-        api.destroy_friendship(user_id)
-        logger.info("Oldest following account unfollowed.")
+        username = api.get_user(user_id).screen_name
+        api.destroy_friendship(username)
+        logger.info(f'Unfollowed: @{username}')
         _random_sleep(logger, config.sleep_per_action[0], config.sleep_per_action[1])
         return True
     except tweepy.TweepError as e:
@@ -491,7 +494,7 @@ def _generate_text(logger):
             reply = reply.upper()
         elif capitalization == "lower":
             reply = reply.lower()
-        logger.info(f'Text generated: {reply}')
+        logger.debug(f'Text generated: {reply}')
         return reply
     except Exception as e:
         logger.error(f'_generate_text error: {e}')
