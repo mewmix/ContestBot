@@ -10,12 +10,12 @@ token_secret = ""
 retweet = True
 like = True
 follow = True
-comment = True
+comment = False     # suggest leaving this off as it triggers an app write limitation fairly quickly
 dm = False  # suggest leaving this off as you cannot send DMs to users that don't follow you
 
 
 # ========================ACTION SETTINGS========================
-retweet_keywords = ["rt", "retweet", "-rt", "#rt", "🔁", "rt,", "rt.", "rt!"]
+retweet_keywords = ["rt", "retweet", "-rt", "#rt", "🔁", "rt,", "rt.", "rt!", "rt+", "rt&", "rt-"]
 like_keywords = ["like", "favorite", "fav", "❤️"]
 follow_keywords = ["follow", "mbf", "flw"]
 comment_keywords = ["reply", "comment"]
@@ -24,10 +24,10 @@ dm_keywords = ["message", "dm"]
 
 
 # ========================SLEEP SETTINGS========================
-sleep_per_tweet = [200, 500]  # [min, max] random sleeps this time after all actions have been performed on each tweet
-sleep_per_action = [30, 60]  # [min, max] random sleeps this time after each action on a tweet such as rt, like, follow
-sleep_per_unfollow = [200, 350]  # [min, max] random sleeps this time after each unfollow in ContestBot._unfollow()
-sleep_unfollow_mode = [700, 1000]  # [min, max] random sleeps this time at start and finish of ContestBot._unfollow_mode()
+sleep_per_tweet = [110, 180]  # [min, max] random sleeps this time after all actions have been performed on each tweet
+sleep_per_action = [15, 30]  # [min, max] random sleeps this time after each action on a tweet such as rt, like, follow
+sleep_per_unfollow = [100, 200]  # [min, max] random sleeps this time after each unfollow in ContestBot._unfollow()
+sleep_unfollow_mode = [500, 1000]  # [min, max] random sleeps this time at start and finish of ContestBot._unfollow_mode()
 
 
 # ========================SEARCH SETTINGS========================
@@ -42,7 +42,7 @@ include_replies = False  # include in search results. Replies are often times NO
 
 # ========================FOLLOW/UNFOLLOW SETTINGS========================
 max_following = [1800, 1950]  # [min, max] random choice of max_following before ContestBot._unfollow_mode() is triggered, must be less than 2000
-unfollow_range = [200, 350]  # [min, max] random choice of users to unfollow in total for a run of ContestBot._unfollow_mode()
+unfollow_range = [100, 200]  # [min, max] random choice of users to unfollow in total for a run of ContestBot._unfollow_mode()
 
 
 # ========================COMMENT SETTINGS========================
