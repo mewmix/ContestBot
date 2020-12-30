@@ -28,6 +28,5 @@ def main():
             tweets = bot.get_tweets(logger, api, search_type)
 
 
-
 if __name__ == '__main__':
     main()

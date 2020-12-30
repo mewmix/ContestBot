@@ -89,7 +89,7 @@ def test_generate_text(logger):
     permutations = []
 
     # generate all possible uppercase, lowercase, and original permutations of config.replies + config.punctuation
-    for item in product(config.replies, config.punctuation):
+    for item in product(config.comments, config.comment_punctuation):
         original_reply = ''.join(item)
         upper_reply = original_reply.upper()
         lower_reply = original_reply.lower()

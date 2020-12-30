@@ -9,21 +9,24 @@ import config
 
 def initialize_logger():
     try:
+        # get logger level
         levels = {0: logging.NOTSET, 1: logging.DEBUG, 2: logging.INFO, 3: logging.WARNING, 4: logging.ERROR,
                   5: logging.CRITICAL}
         level = levels.get(config.level)
-
+        # create logger instance
         logger = logging.getLogger("ContestBot")
+        # create logger formatter
         formatter = logging.Formatter('%(asctime)s - %(levelname)-s - %(message)s', datefmt="%H:%M:%S")
-
+        # console logs
         console_handler = logging.StreamHandler(sys.stdout)
         console_handler.setFormatter(formatter)
         logger.addHandler(console_handler)
-
-        file_handler = logging.FileHandler('ContestBot.log')
-        file_handler.setFormatter(formatter)
-        logger.addHandler(file_handler)
-
+        # file logs
+        if config.file_logs:
+            file_handler = logging.FileHandler('ContestBot.log')
+            file_handler.setFormatter(formatter)
+            logger.addHandler(file_handler)
+        # set logger level
         logger.setLevel(level)
         logger.debug("Logger initialized.")
         return logger
@@ -46,52 +49,34 @@ def check_config(logger):
         if config.follow and not config.username:
             valid = False
             logger.error("config.follow feature ON requires you to supply a config.username.")
-
         authentication_settings = [config.consumer_key, config.consumer_secret, config.token, config.token_secret]
         if any(not setting for setting in authentication_settings):
             valid = False
             logger.error("Missing authentication setting(s) in config.py.")
 
-        # check logging settings
-        if 1 > config.level > 5:
-            valid = False
-            logger.error("config.level must be a value between 1 and 5")
-
         # check toggle feature settings
         toggle_settings = [config.retweet, config.like, config.follow, config.comment, config.dm]
         if any(type(setting) != bool for setting in toggle_settings):
             valid = False
-            logger.error("Missing toggle setting(s) in config.py.")
+            logger.error("Missing toggle feature setting(s) in config.py.")
 
-        # check general settings
-        if config.search_type not in ("mixed", "recent", "popular"):
+        # check action settings
+        if config.retweet and not config.retweet_keywords:
             valid = False
-            logger.error(f'config.search_type must be "mixed", "recent", or "popular".')
-
-        if not type(config.include_retweets) == bool:
+            logger.error("config.retweet feature ON requires you to supply config.retweet_keywords.")
+        if config.like and not config.like_keywords:
             valid = False
-            logger.error("config.include_retweets must be True or False.")
-
-        if not type(config.include_replies) == bool:
+            logger.error("config.like feature ON requires you to supply config.like_keywords.")
+        if config.follow and not config.follow_keywords:
             valid = False
-            logger.error("config.include_replies must be True or False.")
-
-        if config.count <= 0:
+            logger.error("config.follow feature ON requires you to supply config.follow_keywords.")
+        if config.comment and not all([config.comment_keywords, config.tag_keywords]):
             valid = False
-            logger.error("Invalid config.count setting. Must be greater than 0.")
-
-        if config.follow and (config.max_following[0] > config.max_following[1] or config.max_following[0] < 0 or
-                              config.max_following[1] > 2000 or config.max_following[1]) < 0:
+            logger.error("config.comment feature ON requires you to supply config.comment_keywords and "
+                         "config.tag_keywords.")
+        if config.dm and not config.dm_keywords:
             valid = False
-            logger.error("config.follow feature ON requires you to supply config.max_following greater than 0 and "
-                         "less than 2000. Min should be > 0, Max should be < 2000.")
-
-        if config.follow and (config.unfollow_range[0] > config.unfollow_range[1] or config.unfollow_range[0] < 0 or
-                              config.unfollow_range[1] < 0):
-            valid = False
-            logger.error(
-                "config.follow feature ON requires you to supply config.unfollow_range greater than 0. Min should be "
-                "< Max and both should be > 0.")
+            logger.error("config.dm feature ON requires you to supply config.dm_keywords.")
 
         # check sleep settings
         if (config.sleep_per_tweet[0] < 0) or (config.sleep_per_tweet[0] > config.sleep_per_tweet[1]) or (
@@ -100,14 +85,12 @@ def check_config(logger):
             logger.error(
                 "Invalid config.sleep_per_tweet setting. Each value must be 0 or greater and second value cannot be "
                 "larger than first.")
-
         if (config.sleep_per_action[0] < 0) or (config.sleep_per_action[0] > config.sleep_per_action[1]) or (
                 config.sleep_per_action[1] < 0):
             valid = False
             logger.error(
                 "Invalid config.sleep_per_action setting. Each value must be 0 or greater and second value cannot be "
                 "larger than first.")
-
         if config.follow and (
                 (config.sleep_per_unfollow[0] < 0) or (config.sleep_per_unfollow[0] > config.sleep_per_unfollow[1]) or (
                 config.sleep_per_unfollow[1] < 0)):
@@ -115,7 +98,6 @@ def check_config(logger):
             logger.error(
                 "Invalid config.sleep_per_unfollow setting. Each value must be 0 or greater and second value cannot be "
                 "larger than first.")
-
         if config.follow and ((config.sleep_unfollow_mode[0] < 0) or (
                 config.sleep_unfollow_mode[0] > config.sleep_unfollow_mode[1]) or (
                                       config.sleep_unfollow_mode[1] < 0)):
@@ -124,37 +106,52 @@ def check_config(logger):
                 "Invalid config.sleep_unfollow_mode setting. Each value must be 0 or greater and second value cannot be "
                 "larger than first.")
 
-        # check reply settings
-        if config.comment and not all([config.tag_handles, config.replies, config.punctuation]):
+        # check search settings
+        if config.count <= 0:
             valid = False
-            logger.error("config.comment feature ON requires you to supply config.tag_handles, config.replies, "
-                         "and config.punctuation.")
+            logger.error("Invalid config.count setting. Must be greater than 0.")
+        if config.search_type not in ("mixed", "recent", "popular"):
+            valid = False
+            logger.error(f'config.search_type must be "mixed", "recent", or "popular".')
+        if not config.search_keywords:
+            valid = False
+            logger.error("Missing config.search_keywords.")
+        if not type(config.include_retweets) == bool:
+            valid = False
+            logger.error("config.include_retweets must be True or False.")
+        if not type(config.include_replies) == bool:
+            valid = False
+            logger.error("config.include_replies must be True or False.")
 
-        # check keyword settings
-        if not config.contest_keywords:
+        # check follow/unfollow settings
+        if config.follow and (config.max_following[0] > config.max_following[1] or config.max_following[0] < 0 or
+                              config.max_following[1] > 2000 or config.max_following[1]) < 0:
             valid = False
-            logger.error("Missing config.contest_keywords.")
+            logger.error("config.follow feature ON requires you to supply config.max_following. Min must be > 0, "
+                         "Max must be < 2000 and > Min.")
+        if config.follow and (config.unfollow_range[0] > config.unfollow_range[1] or config.unfollow_range[0] < 0 or
+                              config.unfollow_range[1] < 0):
+            valid = False
+            logger.error(
+                "config.follow feature ON requires you to supply config.unfollow_range greater than 0. Min should be "
+                "< Max and both should be > 0.")
 
-        if config.retweet and not config.retweet_keywords:
+        # check comment settings
+        if not type(config.include_hashtags) == bool:
             valid = False
-            logger.error("config.retweet feature ON requires you to supply config.retweet_keywords.")
+            logger.error("config.include_hashtags must be True or False.")
+        if config.comment and not all([config.tag_friends, config.comments, config.comment_punctuation]):
+            valid = False
+            logger.error("config.comment feature ON requires you to supply config.tag_friends, config.comments, "
+                         "and config.comment_punctuation.")
 
-        if config.like and not config.like_keywords:
+        # check logging settings
+        if 1 > config.level > 5:
             valid = False
-            logger.error("config.like feature ON requires you to supply config.like_keywords.")
-
-        if config.follow and not config.follow_keywords:
+            logger.error("config.level must be a value between 1 and 5")
+        if not type(config.file_logs) == bool:
             valid = False
-            logger.error("config.follow feature ON requires you to supply config.follow_keywords.")
-
-        if config.comment and not all([config.comment_keywords, config.tag_keywords]):
-            valid = False
-            logger.error("config.comment feature ON requires you to supply config.comment_keywords and "
-                         "config.tag_keywords.")
-
-        if config.dm and not config.dm_keywords:
-            valid = False
-            logger.error("config.dm feature ON requires you to supply config.dm_keywords.")
+            logger.error("config.file_logs must be True or False.")
 
     except Exception as e:
         valid = False
@@ -203,7 +200,7 @@ def get_tweets(logger, api, search_type=config.search_type):
         all_tweets = []
         logger.info("Searching for tweets...")
         logger.info(f'Search type: {search_type}')
-        for keyword in config.contest_keywords:
+        for keyword in config.search_keywords:
             search_keyword = keyword.lower()
             if not config.include_retweets and not config.include_replies:
                 logger.debug("Not including retweets or replies.")
@@ -236,7 +233,19 @@ def get_tweets(logger, api, search_type=config.search_type):
 def check_tweet(logger, api, tweet):
     try:
         lowercase_tweet_text = _get_tweet_text(logger, tweet)
-        # workaround since tweet.favorited/retweeted is not supported on search tweets. Uses get_status to circumvent
+        # check if username has any banned user words in it (set in config.banned_user_words)
+        if config.banned_username_words:
+            if any(banned_user_word.lower() in tweet.user.screen_name.lower() for banned_user_word in
+                   config.banned_username_words):
+                logger.info("Banned user word found in username. Skipping tweet.")
+                return False
+        # check if tweet text has any banned words in it (set in config.banned_words)
+        if config.banned_tweet_words:
+            if any(banned_word.lower() in lowercase_tweet_text for banned_word in config.banned_tweet_words):
+                logger.info("Banned word found in tweet. Skipping tweet.")
+                return False
+        # workaround to check if tweet has already been retweeted or liked
+        # placed this code block after banned username/tweet words to save an api call if banned words found first
         status = api.get_status(tweet.id)
         # check if tweet has already been liked
         if status.favorited:
@@ -246,17 +255,6 @@ def check_tweet(logger, api, tweet):
         if status.retweeted:
             logger.info("Tweet already retweeted. Skipping tweet.")
             return False
-        # check if username has any banned user words in it (set in config.banned_user_words)
-        if config.banned_user_words:
-            if any(banned_user_word.lower() in tweet.user.screen_name.lower() for banned_user_word in
-                   config.banned_user_words):
-                logger.info("Banned user word found in username. Skipping tweet.")
-                return False
-        # check if tweet text has any banned words in it (set in config.banned_words)
-        if config.banned_words:
-            if any(banned_word.lower() in lowercase_tweet_text for banned_word in config.banned_words):
-                logger.info("Banned word found in tweet. Skipping tweet.")
-                return False
         logger.debug("Found tweet that does not contain banned users, banned words, or already liked/retweeted.")
         return lowercase_tweet_text
     except Exception as e:
@@ -422,6 +420,21 @@ def _get_tweet_author(logger, tweet):
     return author
 
 
+def _get_tweet_hashtags(logger, tweet):
+    hashtags = set()
+    lowercase_tweet_text = _get_tweet_text(logger, tweet)
+    for word in lowercase_tweet_text.split():
+        if word.startswith("#"):
+            hashtags.add(word)
+    if hashtags:
+        hashtags_string = ' '.join(hashtags)
+        logger.debug(f'Hashtags found in tweet: {hashtags_string}')
+        return hashtags_string
+    else:
+        logger.debug("No hashtags found in tweet.")
+        return False
+
+
 def _unfollow_mode(logger, api, following):
     try:
         total_to_unfollow = random.randint(config.unfollow_range[0], config.unfollow_range[1])
@@ -488,9 +501,14 @@ def _follow(logger, api, tweet):
 
 def _comment(logger, api, tweet, tag=False):
     try:
+        # generate and build comment based off config.py settings
         comment = _generate_text(logger)
+        if config.include_hashtags:
+            hashtags = _get_tweet_hashtags(logger, tweet)
+            if hashtags:
+                comment = f'{comment} {hashtags}'
         if tag:
-            tag_username = random.choice(config.tag_handles)
+            tag_username = random.choice(config.tag_friends)
             comment = f'@{tag_username} {comment}'
 
         api.update_status(status=comment, in_reply_to_status_id=tweet.id, auto_populate_reply_metadata=True)
@@ -561,7 +579,7 @@ def _random_sleep(logger, minimum, maximum):
 
 def _generate_text(logger):
     try:
-        reply = random.choice(config.replies) + random.choice(config.punctuation)
+        reply = random.choice(config.comments) + random.choice(config.comment_punctuation)
         capitalization = random.choice(["original", "upper", "lower"])
 
         if capitalization == "upper":
