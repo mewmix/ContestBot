@@ -14,6 +14,7 @@ def main():
         if tweets:
             for tweet in tweets:
                 tweet_num += 1
+                logger.info("\n")
                 logger.info("--------------------------------------------------")
                 logger.info(f'Tweet number: {tweet_num}')
                 logger.info("--------------------------------------------------")

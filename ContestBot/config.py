@@ -10,7 +10,7 @@ token_secret = ""
 retweet = True
 like = True
 follow = True
-comment = False     # suggest leaving this off as it triggers an app write limitation fairly quickly
+comment = False  # suggest leaving this off as it triggers an app write limitation fairly quickly
 dm = False  # suggest leaving this off as you cannot send DMs to users that don't follow you
 
 
@@ -24,9 +24,9 @@ dm_keywords = ["message", "dm"]
 
 
 # ========================SLEEP SETTINGS========================
-sleep_per_tweet = [110, 180]  # [min, max] random sleeps this time after all actions have been performed on each tweet
-sleep_per_action = [15, 30]  # [min, max] random sleeps this time after each action on a tweet such as rt, like, follow
-sleep_per_unfollow = [100, 200]  # [min, max] random sleeps this time after each unfollow in ContestBot._unfollow()
+sleep_per_tweet = [120, 200]  # [min, max] random sleeps this time after all actions have been performed on each tweet
+sleep_per_action = [30, 45]  # [min, max] random sleeps this time after each action on a tweet such as rt, like, follow
+sleep_per_unfollow = [120, 240]  # [min, max] random sleeps this time after each unfollow in ContestBot._unfollow()
 sleep_unfollow_mode = [500, 1000]  # [min, max] random sleeps this time at start and finish of ContestBot._unfollow_mode()
 
 
@@ -58,5 +58,5 @@ comment_punctuation = ["", "!", "!!", "!!!", "!!!!", "!!!!!", "!!!!!!", ".", "..
 
 
 # ========================LOGGING SETTINGS========================
-level = 1  # 1 for debug, 2 for info, 3 for warning, 4 for error, 5 for critical
+level = 2  # 1 for debug, 2 for info, 3 for warning, 4 for error, 5 for critical
 file_logs = True  # toggle file logs on/off
