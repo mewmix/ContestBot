@@ -268,7 +268,7 @@ def find_actions(logger, tweet_text):
         lowercase_tweet_text = tweet_text
         split_text = lowercase_tweet_text.split()
         logger.debug(f'lowercase_tweet_text: {lowercase_tweet_text}')
-        logger.info("Searching tweet for ON features keywords...")
+        logger.info("Searching tweet for action keywords...")
 
         # check if tweet contains any retweet keywords, special case for "rt" since it was returning false positives
         if config.retweet:
@@ -605,4 +605,5 @@ def _tweepy_error_handler(logger, tweep_error):
         raise Exception(f'Terminated because account is probably banned or limited.')
     elif tweep_error.api_code == 261:
         raise Exception(f'Terminated because app is probably limited.')
-    return False
+    else:
+        return True

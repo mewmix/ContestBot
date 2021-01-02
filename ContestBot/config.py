@@ -31,11 +31,11 @@ sleep_unfollow_mode = [500, 1000]  # [min, max] random sleeps this time at start
 
 
 # ========================SEARCH SETTINGS========================
-count = 100  # num of tweets to search for each search_keyword per iteration of the infinite main loop
+count = 200  # num of tweets to search for each search_keyword per iteration of the infinite main loop
 search_type = "mixed"  # "mixed", "recent", or "popular". Can also use ContestBot.get_next_search_mode() to iterate modes
 search_keywords = ["giveaway", "contest", "sweepstake"]
 banned_username_words = ["bot", "bts", "stan", "kpop"]
-banned_tweet_words = ["join", "download", "bts", "kpop", "album", "gcash", "subscribe", "answer", "robux"]
+banned_tweet_words = ["join", "download", "bts", "kpop", "album", "gcash", "subscribe", "answer", "robux", "indonesia", "kyoongcon"]
 include_retweets = True  # include in search results. True sometimes results in some duplicate but usually more quality tweets
 include_replies = False  # include in search results. Replies are often times NOT contests/giveaways
 
