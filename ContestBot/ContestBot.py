@@ -445,11 +445,12 @@ def _unfollow_mode(logger, api, following):
         logger.info("--------------------------------------------------")
         _random_sleep(logger, config.sleep_unfollow_mode[0], config.sleep_unfollow_mode[1])
         while len(following) > target_following:
+            logger.info("\n")
             unfollow = _unfollow(logger, api, following.pop())
             if not unfollow:
                 logger.warning("Problem unfollowing. Skipping user.")
             following = _get_following(logger, api)
-            unfollow_remaining = len(following) - total_to_unfollow
+            unfollow_remaining = len(following) - target_following
             logger.info(f'{unfollow_remaining} user(s) remaining to unfollow.')
         logger.info("Unfollow mode completed.")
         _random_sleep(logger, config.sleep_unfollow_mode[0], config.sleep_unfollow_mode[1])
@@ -543,7 +544,6 @@ def _get_following(logger, api):
         for user in tweepy.Cursor(api.friends_ids, screen_name=config.username, count=5000).items():
             follower_ids.append(user)
         logger.info(f'Current following: {len(follower_ids)}')
-        _random_sleep(logger, config.sleep_per_action[0], config.sleep_per_action[1])
         return follower_ids
     except tweepy.TweepError as e:
         return _tweepy_error_handler(logger, e)
@@ -606,4 +606,4 @@ def _tweepy_error_handler(logger, tweep_error):
     elif tweep_error.api_code == 261:
         raise Exception(f'Terminated because app is probably limited.')
     else:
-        return True
+        return False

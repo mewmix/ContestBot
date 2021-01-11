@@ -25,7 +25,7 @@ dm_keywords = ["message", "dm"]
 
 # ========================SLEEP SETTINGS========================
 sleep_per_tweet = [120, 200]  # [min, max] random sleeps this time after all actions have been performed on each tweet
-sleep_per_action = [30, 45]  # [min, max] random sleeps this time after each action on a tweet such as rt, like, follow
+sleep_per_action = [35, 50]  # [min, max] random sleeps this time after each action on a tweet such as rt, like, follow
 sleep_per_unfollow = [120, 240]  # [min, max] random sleeps this time after each unfollow in ContestBot._unfollow()
 sleep_unfollow_mode = [500, 1000]  # [min, max] random sleeps this time at start and finish of ContestBot._unfollow_mode()
 
@@ -41,7 +41,7 @@ include_replies = False  # include in search results. Replies are often times NO
 
 
 # ========================FOLLOW/UNFOLLOW SETTINGS========================
-max_following = [1800, 1950]  # [min, max] random choice of max_following before ContestBot._unfollow_mode() is triggered, must be less than 2000
+max_following = [1900, 1999]  # [min, max] random choice of max_following before ContestBot._unfollow_mode() is triggered, must be less than 2000
 unfollow_range = [100, 200]  # [min, max] random choice of users to unfollow in total for a run of ContestBot._unfollow_mode()
 
 
