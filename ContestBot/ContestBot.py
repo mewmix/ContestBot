@@ -329,6 +329,16 @@ def perform_actions(logger, api, tweet, actions):
     actions_ran = {"retweet": False, "like": False, "follow": False, "comment": False, "tag": False,
                    "dm": False}
     try:
+        if actions.get("follow"):
+            following = _get_following(logger, api)
+            max_following = _get_random_max_following(logger)
+            if len(following) > max_following:
+                _unfollow_mode(logger, api, following)
+                return "unfollow_completed"
+            follow = _follow(logger, api, tweet)
+            actions_ran["follow"] = follow
+            if not follow:
+                logger.warning("Problem following.")
         if actions.get("retweet"):
             retweet = _retweet(logger, api, tweet)
             actions_ran["retweet"] = retweet
@@ -341,15 +351,6 @@ def perform_actions(logger, api, tweet, actions):
             if not like:
                 logger.warning("Problem liking. Skipping tweet.")
                 return False
-        if actions.get("follow"):
-            following = _get_following(logger, api)
-            max_following = _get_random_max_following(logger)
-            if len(following) > max_following:
-                _unfollow_mode(logger, api, following)
-            follow = _follow(logger, api, tweet)
-            actions_ran["follow"] = follow
-            if not follow:
-                logger.warning("Problem following.")
         if actions.get("comment") and not actions.get("tag"):
             comment = _comment(logger, api, tweet)
             actions_ran["comment"] = comment
