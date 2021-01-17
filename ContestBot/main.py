@@ -25,6 +25,7 @@ def main():
                         completed_actions = bot.perform_actions(logger, api, tweet, actions)
                         if completed_actions == "unfollow_completed":
                             tweets.clear()
+                            continue
                 tweets.remove(tweet)
         else:
             search_type = bot.get_next_search_type(logger, search_type)
