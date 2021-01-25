@@ -438,6 +438,7 @@ def _get_tweet_hashtags(logger, tweet):
 
 def _unfollow_mode(logger, api, following):
     try:
+        num_invalid_following = 0  # invalid user will keep returning from following api call, so manually remove them
         total_to_unfollow = random.randint(config.unfollow_range[0], config.unfollow_range[1])
         target_following = len(following) - total_to_unfollow
         logger.info("--------------------------------------------------")
@@ -450,7 +451,14 @@ def _unfollow_mode(logger, api, following):
             unfollow = _unfollow(logger, api, following.pop())
             if not unfollow:
                 logger.warning("Problem unfollowing. Skipping user.")
+                num_invalid_following += 1
             following = _get_following(logger, api)
+            # workaround for getting stuck in infinite loop when trying to unfollow suspended/invalid user from api
+            # if invalid users in following api return, manually pop them to ignore for remainder of this unfollow mode
+            if num_invalid_following:
+                for _ in range(num_invalid_following):
+                    user_id = following.pop()
+                    logger.debug(f'Manually popped problematic user id ({user_id}) from following list.')
             unfollow_remaining = len(following) - target_following
             logger.info(f'{unfollow_remaining} user(s) remaining to unfollow.')
         logger.info("Unfollow mode completed.")
