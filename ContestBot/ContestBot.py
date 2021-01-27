@@ -16,7 +16,7 @@ def initialize_logger():
         # create logger instance
         logger = logging.getLogger("ContestBot")
         # create logger formatter
-        formatter = logging.Formatter('%(asctime)s - %(levelname)-s - %(message)s', datefmt="%H:%M:%S")
+        formatter = logging.Formatter('%(config.username)s - %(asctime)s - %(levelname)-s - %(message)s', datefmt="%H:%M:%S")
         # console logs
         console_handler = logging.StreamHandler(sys.stdout)
         console_handler.setFormatter(formatter)
