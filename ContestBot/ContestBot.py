@@ -14,9 +14,9 @@ def initialize_logger():
                   5: logging.CRITICAL}
         level = levels.get(config.level)
         # create logger instance
-        logger = logging.getLogger("ContestBot")
+        logger = logging.getLogger(config.username)
         # create logger formatter
-        formatter = logging.Formatter('%(config.username)s - %(asctime)s - %(levelname)-s - %(message)s', datefmt="%H:%M:%S")
+        formatter = logging.Formatter('%(name)s - %(asctime)s - %(levelname)-s - %(message)s', datefmt="%H:%M:%S")
         # console logs
         console_handler = logging.StreamHandler(sys.stdout)
         console_handler.setFormatter(formatter)
