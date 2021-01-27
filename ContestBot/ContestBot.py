@@ -614,5 +614,7 @@ def _tweepy_error_handler(logger, tweep_error):
         raise Exception(f'Terminated because account is probably banned or limited.')
     elif tweep_error.api_code == 261:
         raise Exception(f'Terminated because app is probably limited.')
+    elif tweep_error.api_code == 32 or tweep_error.api_code == 401:
+        raise Exception(f'Terminated because account is either banned or api keys are bad.')
     else:
         return False
