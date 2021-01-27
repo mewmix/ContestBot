@@ -32,6 +32,7 @@ Run Tests:
 - `pytest ContestBot/tests.py -s`  
 
 Run on Raspberry Pi:
+- If running multiple instances on same pi, rename folder to "ContestBot1" and change path in shell script and auto boot
 - make Twitter app with read and write privileges
 - install requirements.txt (sudo pip3 install -r requirements.txt)
 - fill parameters in config file (API keys, Consumer keys, and settings)
