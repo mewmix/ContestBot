@@ -17,15 +17,18 @@ def main():
     while True:
         if tweets:
             for tweet in tweets:
+                tweet_num += 1
                 logger.info("\n")
                 logger.info("--------------------------------------------------")
                 logger.info(f'Tweet number: {tweet_num}')
                 logger.info(f'Interacted tweets: {success_tweet_num}')
-                logger.info(f'Interaction rate: {(success_tweet_num / tweet_num) * 100}%')
+                if tweet_num > 1:
+                    logger.info(f'Interaction rate: {(success_tweet_num / tweet_num - 1) * 100}%')
+                else:
+                    logger.info(f'Interaction rate: 0%')
                 logger.info(f'Total followed users: {total_followed}')
                 logger.info(f'Total unfollowed users: {total_unfollowed}')
                 logger.info("--------------------------------------------------")
-                tweet_num += 1
                 tweet_text = bot.check_tweet(logger, api, tweet)
                 if tweet_text:
                     actions = bot.find_actions(logger, tweet_text)
