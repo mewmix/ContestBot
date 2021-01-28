@@ -23,7 +23,7 @@ def main():
                 logger.info(f'Tweet number: {tweet_num}')
                 logger.info(f'Interacted tweets: {success_tweet_num}')
                 if success_tweet_num and tweet_num > 1:
-                    logger.info(f'Interaction rate: {((success_tweet_num / (tweet_num - 1)) * 100)}%')
+                    logger.info(f'Interaction rate: {((success_tweet_num / (tweet_num - 1)) * 100):.2f}%')
                 else:
                     logger.info(f'Interaction rate: 0%')
                 logger.info(f'Total followed users: {total_followed}')
