@@ -17,7 +17,6 @@ def main():
     while True:
         if tweets:
             for tweet in tweets:
-                tweet_num += 1
                 logger.info("\n")
                 logger.info("--------------------------------------------------")
                 logger.info(f'Tweet number: {tweet_num}')
@@ -26,6 +25,7 @@ def main():
                 logger.info(f'Total followed users: {total_followed}')
                 logger.info(f'Total unfollowed users: {total_unfollowed}')
                 logger.info("--------------------------------------------------")
+                tweet_num += 1
                 tweet_text = bot.check_tweet(logger, api, tweet)
                 if tweet_text:
                     actions = bot.find_actions(logger, tweet_text)
@@ -40,6 +40,7 @@ def main():
                             # perform_actions successfully performed follow action on tweet
                             elif completed_actions.get("follow"):
                                 total_followed += 1
+                            success_tweet_num += 1
                 tweets.remove(tweet)
         else:
             search_type = bot.get_next_search_type(logger, search_type)
