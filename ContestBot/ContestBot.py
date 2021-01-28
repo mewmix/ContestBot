@@ -333,8 +333,8 @@ def perform_actions(logger, api, tweet, actions):
             following = _get_following(logger, api)
             max_following = _get_random_max_following(logger)
             if len(following) > max_following:
-                _unfollow_mode(logger, api, following)
-                return "unfollow_completed"
+                total_unfollowed = _unfollow_mode(logger, api, following)
+                return total_unfollowed
             follow = _follow(logger, api, tweet)
             actions_ran["follow"] = follow
             if not follow:
@@ -447,6 +447,7 @@ def _get_tweet_hashtags(logger, tweet):
 def _unfollow_mode(logger, api, following):
     try:
         num_invalid_following = 0  # invalid user will keep returning from following api call, so manually remove them
+        total_unfollowed = 0
         total_to_unfollow = random.randint(config.unfollow_range[0], config.unfollow_range[1])
         target_following = len(following) - total_to_unfollow
         logger.info("--------------------------------------------------")
@@ -460,6 +461,8 @@ def _unfollow_mode(logger, api, following):
             if not unfollow:
                 logger.warning("Problem unfollowing. Skipping user.")
                 num_invalid_following += 1
+            else:
+                total_unfollowed += 1
             following = _get_following(logger, api)
             # workaround for getting stuck in infinite loop when trying to unfollow suspended/invalid user from api
             # if invalid users in following api return, manually pop them to ignore for remainder of this unfollow mode
@@ -471,6 +474,7 @@ def _unfollow_mode(logger, api, following):
             logger.info(f'{unfollow_remaining} user(s) remaining to unfollow.')
         logger.info("Unfollow mode completed.")
         _random_sleep(logger, config.sleep_unfollow_mode[0], config.sleep_unfollow_mode[1])
+        return total_unfollowed
     except Exception as e:
         logger.warning(f'_unfollow_mode_error: {e}')
         logger.warning(f'Exiting unfollow mode.')

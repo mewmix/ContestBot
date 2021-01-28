@@ -25,15 +25,15 @@ To Use:
 - create a twitter app (https://developer.twitter.com/en/apps) see Requirements above  
 - enter settings in config.py  
     - REQUIRED: username, consumer_key, consumer_secret, token, token_secret  
+- for account warmup: set config.sleep_multiplier to 6 for a week then 4, 2, 1 
 - run main.py  
-- for account warmup: set config.sleep_multiplier to 10 for a week, then 8, 6, 4, 2, 1 
 
 Run Tests:  
 - cd into root project directory (ex: `cd C:\Users\YOURNAME\Desktop\ContestBot`)  
 - `pytest ContestBot/tests.py -s`  
 
 Run on Raspberry Pi:
-- for account warmup: set config.sleep_multiplier to 10 for a week, then 8, 6, 4, 2, 1 
+- for account warmup: set config.sleep_multiplier to 6 for a week then 4, 2, 1 
 - make Twitter app with read and write privileges  
 - cd into project directory and install requirements.txt (pip3 install -r requirements.txt)
 - fill parameters in config file (API keys, Consumer keys, and settings)
