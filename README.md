@@ -19,20 +19,22 @@ Requirements:
 - An approved developer Twitter account (apply here: https://developer.twitter.com/en/application/use-case)
 
 To Use:  
-- fork/clone ContestBot project  
+- fork/clone ContestBot project   
 - create venv using python 3.7  
 - `pip install -r requirements.txt`  
 - create a twitter app (https://developer.twitter.com/en/apps) see Requirements above  
 - enter settings in config.py  
     - REQUIRED: username, consumer_key, consumer_secret, token, token_secret  
 - run main.py  
+- for account warmup: set config.sleep_multiplier to 10 for a week, then 8, 6, 4, 2, 1 
 
 Run Tests:  
 - cd into root project directory (ex: `cd C:\Users\YOURNAME\Desktop\ContestBot`)  
 - `pytest ContestBot/tests.py -s`  
 
 Run on Raspberry Pi:
-- make Twitter app with read and write privileges
+- for account warmup: set config.sleep_multiplier to 10 for a week, then 8, 6, 4, 2, 1 
+- make Twitter app with read and write privileges  
 - cd into project directory and install requirements.txt (pip3 install -r requirements.txt)
 - fill parameters in config file (API keys, Consumer keys, and settings)
 - change permissions to anyone for .sh file

@@ -5,6 +5,7 @@ import config
 def main():
     logger = bot.initialize_logger()
     bot.check_config(logger)
+    bot.multiply_sleeps()
     api = bot.authenticate(logger)
     search_type = config.search_type
     tweets = bot.get_tweets(logger, api, search_type)

@@ -391,6 +391,14 @@ def get_next_search_type(logger, current_search_type):
     return new_search_type
 
 
+def multiply_sleeps(logger):
+    config.sleep_per_tweet = [sleep_time*config.sleep_multiplier for sleep_time in config.sleep_per_tweet]
+    config.sleep_per_action = [sleep_time*config.sleep_multiplier for sleep_time in config.sleep_per_action]
+    config.sleep_per_unfollow = [sleep_time*config.sleep_multiplier for sleep_time in config.sleep_per_unfollow]
+    config.sleep_unfollow_mode = [sleep_time*config.sleep_multiplier for sleep_time in config.sleep_unfollow_mode]
+    logger.debug(f'Sleeps successfully multiplied.')
+
+
 def _get_random_max_following(logger):
     random_max_following = random.randint(config.max_following[0], config.max_following[1])
     logger.debug(f'Random max following: {random_max_following}')
