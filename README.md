@@ -36,13 +36,13 @@ Run on Raspberry Pi:
 - for account warmup: set config.sleep_multiplier to 6 for a week then 4, 2, 1 
 - make Twitter app with read and write privileges  
 - cd into project directory and install requirements.txt (pip3 install -r requirements.txt)
-- fill parameters in config file (API keys, Consumer keys, and settings)
-- change permissions to anyone for .sh file
+- fill parameters in config file (API keys, sleep_multiplier for account warmup, other settings), can save them in separate file for safekeeping
+- change permissions to anyone for .sh file and pull to desktop
 - run on boot  
 `sudo nano /etc/xdg/lxsession/LXDE-pi/autostart`
 - add this to the end of that file  
 `@lxterminal -e sudo python3 /home/pi/Desktop/fullfilepathto.py`
-- If running multiple instances on same pi, rename folder to "ContestBot1", change in shell script and auto boot too
+- If running multiple instances on same pi, rename new folder to "ContestBot1", change in shell script and auto boot too
 
 Disclaimer:  
 This application is for educational purposes only. There is a possibility of Twitter suspension from using this application. I am not responsible for misuse or abuse of this application or any variants of it. I am not responsible for any damages or liability incurred as a result of using this application. Use at your own risk.
