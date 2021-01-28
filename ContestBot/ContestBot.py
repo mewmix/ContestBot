@@ -268,7 +268,7 @@ def find_actions(logger, tweet_text):
         lowercase_tweet_text = tweet_text
         split_text = lowercase_tweet_text.split()
         logger.debug(f'lowercase_tweet_text: {lowercase_tweet_text}')
-        logger.info("Searching tweet for action keywords...")
+        logger.debug("Searching tweet for action keywords...")
 
         # check if tweet contains any retweet keywords, special case for "rt" since it was returning false positives
         if config.retweet:
@@ -284,28 +284,28 @@ def find_actions(logger, tweet_text):
                     if lowercase_retweet_keyword in lowercase_tweet_text:
                         actions["retweet"] = True
             if actions.get("retweet"):
-                logger.info("Retweet keyword found in tweet.")
+                logger.debug("Retweet keyword found in tweet.")
         # check if tweet contains any like keywords
         if any(like_keyword.lower() in lowercase_tweet_text for like_keyword in config.like_keywords) and config.like:
-            logger.info("Like keyword found in tweet.")
+            logger.debug("Like keyword found in tweet.")
             actions["like"] = True
         # check if tweet contains any follow keywords
         if any(follow_keyword.lower() in lowercase_tweet_text for follow_keyword in
                config.follow_keywords) and config.follow:
-            logger.info("Follow keyword found in tweet.")
+            logger.debug("Follow keyword found in tweet.")
             actions["follow"] = True
         # check if tweet contains any comment keywords
         if any(comment_keyword.lower() in lowercase_tweet_text for comment_keyword in
                config.comment_keywords) and config.comment:
-            logger.info("Comment keyword found in tweet.")
+            logger.debug("Comment keyword found in tweet.")
             actions["comment"] = True
         # check if tweet contains any tag keywords
         if any(tag_keyword.lower() in lowercase_tweet_text for tag_keyword in config.tag_keywords) and config.comment:
-            logger.info("Tag keyword found in tweet.")
+            logger.debug("Tag keyword found in tweet.")
             actions["tag"] = True
         # check if tweet contains any dm keywords
         if any(dm_keyword.lower() in lowercase_tweet_text for dm_keyword in config.dm_keywords) and config.dm:
-            logger.info("Dm keyword found in tweet.")
+            logger.debug("Dm keyword found in tweet.")
             actions["dm"] = True
         # if any actions detected
         if any(value for value in actions.values()):
@@ -392,10 +392,10 @@ def get_next_search_type(logger, current_search_type):
 
 
 def multiply_sleeps(logger):
-    config.sleep_per_tweet = [sleep_time*config.sleep_multiplier for sleep_time in config.sleep_per_tweet]
-    config.sleep_per_action = [sleep_time*config.sleep_multiplier for sleep_time in config.sleep_per_action]
-    config.sleep_per_unfollow = [sleep_time*config.sleep_multiplier for sleep_time in config.sleep_per_unfollow]
-    config.sleep_unfollow_mode = [sleep_time*config.sleep_multiplier for sleep_time in config.sleep_unfollow_mode]
+    config.sleep_per_tweet = [sleep_time * config.sleep_multiplier for sleep_time in config.sleep_per_tweet]
+    config.sleep_per_action = [sleep_time * config.sleep_multiplier for sleep_time in config.sleep_per_action]
+    config.sleep_per_unfollow = [sleep_time * config.sleep_multiplier for sleep_time in config.sleep_per_unfollow]
+    config.sleep_unfollow_mode = [sleep_time * config.sleep_multiplier for sleep_time in config.sleep_unfollow_mode]
     logger.debug(f'Sleeps successfully multiplied.')
 
 
