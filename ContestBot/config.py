@@ -24,7 +24,7 @@ dm_keywords = ["message", "dm"]
 
 
 # ========================SLEEP SETTINGS========================
-sleep_multiplier = 1   # multiply all sleeps by this amount, suggested 2 for a week then 1.5, 1
+sleep_multiplier = 1   # multiply all sleeps by this amount. Suggested 2 for first week, then 1
 sleep_per_tweet = [180, 240]  # [min, max] random sleeps this time after all actions have been performed on each tweet
 sleep_per_action = [45, 60]  # [min, max] random sleeps this time after each action on a tweet such as rt, like, follow
 sleep_per_unfollow = [200, 300]  # [min, max] random sleeps this time after each unfollow in ContestBot._unfollow()
