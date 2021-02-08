@@ -257,6 +257,8 @@ def check_tweet(logger, api, tweet):
             return False
         logger.debug("Found tweet that does not contain banned users, banned words, or already liked/retweeted.")
         return lowercase_tweet_text
+    except tweepy.TweepError as e:
+        _tweepy_error_handler(logger, e)
     except Exception as e:
         logger.error(f'check_tweet error: {e}')
         return False
@@ -475,6 +477,8 @@ def _unfollow_mode(logger, api, following):
         logger.info("Unfollow mode completed.")
         _random_sleep(logger, config.sleep_unfollow_mode[0], config.sleep_unfollow_mode[1])
         return total_unfollowed
+    except tweepy.TweepError as e:
+        _tweepy_error_handler(logger, e)
     except Exception as e:
         logger.warning(f'_unfollow_mode_error: {e}')
         logger.warning(f'Exiting unfollow mode.')
