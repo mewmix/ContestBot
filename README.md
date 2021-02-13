@@ -34,6 +34,7 @@ Run Tests:
 
 Run on Raspberry Pi:
 - for account warmup: set config.sleep_multiplier to 2 for first week, then 1  
+- make chromium profile for each account  
 - make Twitter app with read and write privileges  
 - cd into project directory and install requirements.txt (pip3 install -r requirements.txt)
 - fill parameters in config file (API keys, sleep_multiplier for account warmup, other settings), can save them in separate file for safekeeping
