@@ -182,7 +182,7 @@ def authenticate(logger):
         _tweepy_error_handler(logger, e)
     except Exception as e:
         logger.error(f'authenticate error: {e}')
-        raise Exception("Authentication unsuccessful.")
+    raise Exception("Authentication unsuccessful.")
 
 
 def get_tweets(logger, api, search_type=config.search_type):
@@ -224,7 +224,7 @@ def get_tweets(logger, api, search_type=config.search_type):
         logger.info(f'Scraped {len(all_tweets)} total tweets.')
         return all_tweets
     except tweepy.TweepError as e:
-        _tweepy_error_handler(logger, e)
+        return _tweepy_error_handler(logger, e)
     except Exception as e:
         logger.error(f'get_tweets error: {e}')
         return False
@@ -258,7 +258,7 @@ def check_tweet(logger, api, tweet):
         logger.debug("Found tweet that does not contain banned users, banned words, or already liked/retweeted.")
         return lowercase_tweet_text
     except tweepy.TweepError as e:
-        _tweepy_error_handler(logger, e)
+        return _tweepy_error_handler(logger, e)
     except Exception as e:
         logger.error(f'check_tweet error: {e}')
         return False
@@ -375,7 +375,7 @@ def perform_actions(logger, api, tweet, actions):
         _random_sleep(logger, config.sleep_per_tweet[0], config.sleep_per_tweet[1])
         return actions_ran
     except tweepy.TweepError as e:
-        _tweepy_error_handler(logger, e)
+        return _tweepy_error_handler(logger, e)
 
 
 def get_next_search_type(logger, current_search_type):
@@ -478,7 +478,7 @@ def _unfollow_mode(logger, api, following):
         _random_sleep(logger, config.sleep_unfollow_mode[0], config.sleep_unfollow_mode[1])
         return total_unfollowed
     except tweepy.TweepError as e:
-        _tweepy_error_handler(logger, e)
+        return _tweepy_error_handler(logger, e)
     except Exception as e:
         logger.warning(f'_unfollow_mode_error: {e}')
         logger.warning(f'Exiting unfollow mode.')
@@ -624,12 +624,12 @@ def _tweepy_error_handler(logger, tweep_error):
     :param tweep_error: pass the caught exception from caller
     :return: raises exception if critical error, returns False if recoverable error
     """
-    logger.warning(f'_tweepy_error_handler caught {tweep_error}')
+    logger.warning(f'_tweepy_error_handler caught {tweep_error}\nError code: {tweep_error.api_code}')
     # account has been locked
-    if tweep_error.api_code == 326:
+    if tweep_error.api_code == 326 or tweep_error.api_code == 403 or tweep_error.api_code == 63:
         raise Exception(f'Terminated because account is probably banned or limited.')
-    elif tweep_error.api_code == 261:
-        raise Exception(f'Terminated because app is probably limited.')
+    elif tweep_error.api_code == 261 or tweep_error.api_code == 416:
+        raise Exception(f'Terminated because app is probably limited or suspended.')
     elif tweep_error.api_code == 32 or tweep_error.api_code == 401:
         raise Exception(f'Terminated because account is either banned or api keys are bad.')
     else:
